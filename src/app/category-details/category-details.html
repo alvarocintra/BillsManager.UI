@@ -1,0 +1,16 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="category-details-form">
+<h2 class="form-title"><fa-icon [icon]="faScroll"></fa-icon> Category Details</h2>
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input id="name" formControlName="name" placeholder="Enter category name" />
+    @let nameCtrl = form.get('name');
+    @if (nameCtrl?.invalid && nameCtrl?.touched) {
+      <div class="error-message">Name is required.</div>
+    }
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="form.invalid">Save</button>
+    <button type="button" class="cancel" (click)="goBack()">Cancel</button>
+  </div>
+</form>

@@ -1,0 +1,141 @@
+<div class="bills-container">
+  <div class="header">
+    <h3><fa-icon [icon]="faMoneyBills"></fa-icon> Bills</h3>
+    <button class="add-btn" (click)="goToAddBill()"><fa-icon [icon]="faPlus"></fa-icon></button>
+  </div>
+  <div class="table-container">
+    <table class="bills-table">
+      <thead>
+        <tr>
+          <th (click)="sortByColumn('title')">
+            Title
+            @if (sortColumn === 'title') {
+            <fa-icon [icon]="sortDirection === 'asc' ? faChevronUp : faChevronDown"></fa-icon>
+            }
+          </th>
+          <th (click)="sortByColumn('amount')">
+            Amount
+            @if (sortColumn === 'amount') {
+            <fa-icon [icon]="sortDirection === 'asc' ? faChevronUp : faChevronDown"></fa-icon>
+            }
+          </th>
+          <th>
+            Paid
+          </th>
+          <th>
+            Category
+          </th>
+          <th (click)="sortByColumn('dueDate')">
+            Due Date
+            @if (sortColumn === 'dueDate') {
+            <fa-icon [icon]="sortDirection === 'asc' ? faChevronUp : faChevronDown"></fa-icon>
+            }
+          </th>
+          <th (click)="sortByColumn('createdAt')">
+            Date Created
+            @if (sortColumn === 'createdAt') {
+            <fa-icon [icon]="sortDirection === 'asc' ? faChevronUp : faChevronDown"></fa-icon>
+            }
+          </th>
+        </tr>
+        <tr>
+          <th><input type="text" [(ngModel)]="filters.title" (ngModelChange)="applyFilters()" /></th>
+          <th>
+            <input
+              type="number"
+              placeholder="Min"
+              [(ngModel)]="filters.fromAmount"
+              (ngModelChange)="applyFilters()" />
+<br />
+            <input
+              type="number"
+              placeholder="Max"
+              [(ngModel)]="filters.toAmount"
+              (ngModelChange)="applyFilters()" />
+          </th>
+          <th>
+            <select [(ngModel)]="filters.paid" (change)="applyFilters()">
+              <option value="">All</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </th>
+          <th>
+            <select [(ngModel)]="filters.category" (change)="applyFilters()">
+              <option value="">All</option>
+              @for (cat of categories; track cat.id) {
+              <option [value]="cat.name">{{ cat.name }}</option>
+              }
+            </select>
+          </th>
+          <!-- Due Date Filters -->
+          <th>
+            <input
+              type="date"
+              [ngModel]="filters.fromDueDate | date:'yyyy-MM-dd'"
+              (ngModelChange)="onDateChange($event, 'fromDueDate')" />
+<br />
+            <input
+              type="date"
+              [ngModel]="filters.toDueDate | date:'yyyy-MM-dd'"
+              (ngModelChange)="onDateChange($event, 'toDueDate')" />
+          </th>
+          <!-- Created At Filters -->
+          <th>
+            <input type="date" [(ngModel)]="filters.fromCreatedAt" (change)="applyFilters()" /><br />
+            <input type="date" [(ngModel)]="filters.toCreatedAt" (change)="applyFilters()" />
+          </th>
+        </tr>
+
+        <!-- <tr>
+          <th><input type="text" [(ngModel)]="filters.title" (ngModelChange)="applyFilters()" /></th>
+          <th></th>
+          <th>
+            <select [(ngModel)]="filters.paid" (change)="applyFilters()">
+              <option value="">All</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </th>
+          <th>
+            <select [(ngModel)]="filters.category" (change)="applyFilters()">
+              <option value="">All</option>
+              @for (cat of categories; track cat.id) {
+              <option [value]="cat.name">{{ cat.name }}</option>
+              }
+            </select>
+          </th>
+          <th></th>
+          <th></th>
+        </tr> -->
+      </thead>
+    </table>
+    <div class="scrollable-body">
+      <table class="bills-table">
+        <tbody>
+          @for (bill of bills; track bill.id) {
+          <tr (click)="goToDetails(bill.id)">
+            <td>{{ bill.title }}</td>
+            <td>{{ bill.amount | currency: 'GBP' }}</td>
+            <td>{{ bill.paid ? 'Yes' : 'No' }}</td>
+            <td>{{ bill.category?.name || 'Uncategorized' }}</td>
+            <td>{{ bill.dueDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ bill.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- @if (totalPages > 1) { -->
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">
+      <fa-icon [icon]="faChevronLeft"></fa-icon>
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <fa-icon [icon]="faChevronRight"></fa-icon>
+    </button>
+  </div>
+  <!-- } -->
+</div>

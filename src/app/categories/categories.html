@@ -1,0 +1,30 @@
+<div class="categories-container">
+  <div class="header">
+    <h3><fa-icon [icon]="faLayerGroup"></fa-icon> Categories</h3>
+    <button class="add-btn" (click)="goToAddCategory()"><fa-icon [icon]="faPlus"></fa-icon></button>
+  </div>
+
+  <div class="table-container">
+    <table class="categories-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of categories; track category.id) {
+          <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ category.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <button class="details-btn" (click)="goToDetails(category.id)"><fa-icon [icon]="faEye"></fa-icon></button>
+              <button class="delete-btn" (click)="deleteCategory(category.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

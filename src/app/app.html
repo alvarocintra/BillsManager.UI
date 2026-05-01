@@ -1,0 +1,36 @@
+<button class="sidebar-toggle" (click)="toggleSidebar()">
+  @if (sidebarOpen) {
+    <fa-icon [icon]="faTimes"></fa-icon>
+  } @else {
+    <fa-icon [icon]="faBars"></fa-icon>
+  }
+</button>
+<div class="app-container">
+  <!-- Sidebar -->
+  <nav class="sidebar" [class.collapsed]="!sidebarOpen">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Duofy Logo" width="50%" />
+    </div>
+    <ul class="nav-list">
+      <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+
+      <!-- Manage Bills with submenu -->
+      <li (click)="toggleManage()" class="submenu-toggle">
+        <span>Manage Bills</span>
+        <fa-icon [icon]="faChevronDown" [class.rotated]="manageOpen" class="chevron"></fa-icon>
+      </li>
+      @if (manageOpen) {
+      <ul class="submenu">
+        <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+        <li><a routerLink="/bills" routerLinkActive="active">Bills</a></li>
+      </ul>
+      }
+
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,97 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="bill-details-form">
+  <h2 class="form-title"><fa-icon [icon]="faMoneyBill"></fa-icon> Bill Details</h2>
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input id="title" type="text" formControlName="title" placeholder="Enter bill title" />
+    @let titleCtrl = form.get('title');
+    @if (titleCtrl?.invalid && titleCtrl?.touched) {
+      <div class="error-message">Title is required.</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" formControlName="amount" placeholder="Enter bill amount" />
+    @let amountCtrl = form.get('amount');
+    @if (amountCtrl?.invalid && amountCtrl?.touched) {
+      <div class="error-message">Amount is required.</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label" for="paid">
+      <input id="paid" type="checkbox" formControlName="paid" />
+      Paid
+    </label>
+  </div>
+
+  <div class="form-group">
+    <label for="category">Category</label>
+    <select id="category" formControlName="categoryId">
+      <option value="">Select a category</option>
+      @for (category of categories; track category.id) {
+        <option [value]="category.id">{{ category.name }}</option>
+      }
+    </select>
+    @let categoryCtrl = form.get('categoryId');
+    @if (categoryCtrl?.invalid && categoryCtrl?.touched) {
+      <div class="error-message">Category is required.</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="dueDate">Due Date</label>
+    <input id="dueDate" type="date" formControlName="dueDate" />
+    @let dueDateCtrl = form.get('dueDate');
+    @if (dueDateCtrl?.invalid && dueDateCtrl?.touched) {
+      <div class="error-message">Due date is required.</div>
+    }
+  </div>  
+  <div class="form-group">
+    <label for="notes">Notes</label>
+    <textarea id="notes" formControlName="notes" placeholder="Enter any additional notes"></textarea>
+    @let notesCtrl = form.get('notes');
+    @if (notesCtrl?.invalid && notesCtrl?.touched) {
+      <div class="error-message">Notes cannot exceed 500 characters.</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label" for="isRecurring">
+      <input id="isRecurring" type="checkbox" formControlName="isRecurring" (ngModelChange)="updateValidators()" />
+      Recurring Bill
+    </label>
+  </div>
+
+  @if (form.get('isRecurring')?.value) {
+    <div class="form-group">
+      <label for="recurrence">Recurrence</label>
+      <select id="recurrence" formControlName="recurrence">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+      @let recurrenceCtrl = form.get('recurrence');
+      @if (recurrenceCtrl?.invalid && recurrenceCtrl?.touched) {
+        <div class="error-message">Recurrence interval is required for recurring bills.</div>
+      }
+    </div>
+    <div class="form-group">
+      <label for="recurrenceEndDate">Recurrence End Date</label>
+      <input id="recurrenceEndDate" type="date" formControlName="recurrenceEndDate" />
+      @let recurrenceEndDateCtrl = form.get('recurrenceEndDate');
+      @if (recurrenceEndDateCtrl?.invalid && recurrenceEndDateCtrl?.touched) {
+        <div class="error-message">Recurrence end date is required for recurring bills.</div>
+      }
+    </div>
+  }
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="form.invalid">Save</button>
+    <button type="button" class="cancel" (click)="goBack()">Cancel</button>
+    @if (isEditMode) {
+    <button type="button" class="delete-btn" (click)="deleteBill(bill.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+    }
+  </div>
+</form>
