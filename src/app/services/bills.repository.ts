@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Bill } from '../models/bill.model';
 import { PagedResult } from '../models/paged-result.model';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BillsRepository {
-  private readonly apiUrl = 'http://localhost:5013/bills';
+  private readonly apiUrl = environment.apiUrl + '/bills';
 
   constructor(private http: HttpClient) { }
 

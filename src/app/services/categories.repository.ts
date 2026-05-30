@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Category } from '../models/category.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriesRepository {
-  private readonly apiUrl = 'http://localhost:5013/categories';
+  private readonly apiUrl = environment.apiUrl + '/categories';
 
   constructor(private http: HttpClient) { }
 

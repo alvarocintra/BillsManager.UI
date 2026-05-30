@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ImportCommitRequest, ImportCommitResult, ImportPreviewResult } from '../models/import-preview.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImportsRepository {
-  private readonly apiUrl = 'http://localhost:5013/imports';
+  private readonly apiUrl = environment.apiUrl + '/imports';
 
   constructor(private http: HttpClient) { }
 
