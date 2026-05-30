@@ -36,6 +36,7 @@ export class Bills implements OnInit {
   totalPages: number = 0;
   filters: BillsFilter = {
     title: '',
+    type: '',
     paid: '',
     category: '',
     fromDueDate: undefined,
@@ -46,7 +47,7 @@ export class Bills implements OnInit {
     toAmount: undefined
   };
 
-  sortColumn: string = 'createdAt';
+  sortColumn: string = 'dueDate';
   sortDirection: 'asc' | 'desc' = 'desc';
 
   constructor(
@@ -92,6 +93,7 @@ export class Bills implements OnInit {
       this.currentPage,
       this.pageSize,
       this.filters.title,
+      this.filters.type,
       this.filters.category,
       this.filters.paid,
       this.filters.fromDueDate,
@@ -154,7 +156,18 @@ export class Bills implements OnInit {
     this.router.navigate(['/bills/add']);
   }
 
-  goToDetails(categoryId: string) {
-    this.router.navigate(['/bills', categoryId]);
+  getBillDetailsUrl(billId: string) {
+    return `/bills/${billId}`;
+  }
+
+  goToDetails(billId: string, event?: MouseEvent) {
+    if (event?.ctrlKey || event?.button === 1) {
+      // Abrir em nova aba se Ctrl+Click ou clique do meio do mouse
+      const url = this.router.createUrlTree(['/bills', billId]).toString();
+      window.open(url, '_blank');
+    } else {
+      // Navegação normal na mesma aba
+      this.router.navigate(['/bills', billId]);
+    }
   }
 }

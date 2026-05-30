@@ -36,6 +36,7 @@ export class BillDetails {
     private confirmDialog: ConfirmDialogService,
   ) {
     this.form = this.fb.group({
+      type: ['expense', Validators.required],
       title: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0)]],
       dueDate: [''],
@@ -143,8 +144,9 @@ export class BillDetails {
       .subscribe({
         next: (bill) => {
           this.bill = bill;
-          this.form.patchValue({
-            title: bill.title,
+        this.form.patchValue({
+          type: bill.type || 'expense',
+          title: bill.title,
             amount: bill.amount,
             dueDate: new Date(bill.dueDate).toISOString().substring(0, 10), // Format to YYYY-MM-DD
             categoryId: bill.categoryId,

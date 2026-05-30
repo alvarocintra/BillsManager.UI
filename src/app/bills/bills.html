@@ -20,6 +20,9 @@
             }
           </th>
           <th>
+            Type
+          </th>
+          <th>
             Paid
           </th>
           <th>
@@ -52,6 +55,13 @@
               placeholder="Max"
               [(ngModel)]="filters.toAmount"
               (ngModelChange)="applyFilters()" />
+          </th>
+          <th>
+            <select [(ngModel)]="filters.type" (change)="applyFilters()">
+              <option value="">All</option>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
           </th>
           <th>
             <select [(ngModel)]="filters.paid" (change)="applyFilters()">
@@ -114,14 +124,17 @@
       <table class="bills-table">
         <tbody>
           @for (bill of bills; track bill.id) {
-          <tr (click)="goToDetails(bill.id)">
-            <td>{{ bill.title }}</td>
-            <td>{{ bill.amount | currency: 'GBP' }}</td>
-            <td>{{ bill.paid ? 'Yes' : 'No' }}</td>
-            <td>{{ bill.category?.name || 'Uncategorized' }}</td>
-            <td>{{ bill.dueDate | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ bill.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-          </tr>
+            <tr (click)="goToDetails(bill.id, $event)"
+                (auxclick)="goToDetails(bill.id, $event)"
+                class="clickable-row">
+              <td>{{ bill.title }}</td>
+              <td>{{ bill.amount | currency: 'GBP' }}</td>
+              <td>{{ bill.type }}</td>
+              <td>{{ bill.paid ? 'Yes' : 'No' }}</td>
+              <td>{{ bill.category?.name || 'Uncategorized' }}</td>
+              <td>{{ bill.dueDate | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ bill.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
           }
         </tbody>
       </table>

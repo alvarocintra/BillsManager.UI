@@ -1,0 +1,74 @@
+<div class="imports-container">
+  <h3>Import Bank Statement</h3>
+
+  <div class="actions">
+    <input type="file" accept="application/pdf" (change)="onFileSelected($event)" />
+    <button (click)="loadPreview()" [disabled]="loadingPreview">{{ loadingPreview ? 'Loading...' : 'Preview' }}</button>
+    <button (click)="commit()" [disabled]="committing || !preview">{{ committing ? 'Saving...' : 'Confirm Import' }}</button>
+  </div>
+
+  @if (message) {
+    <p class="message">{{ message }}</p>
+  }
+
+  @if (preview) {
+    <p>
+      File: {{ preview.fileName }} |
+      Parsed: {{ preview.parsedTransactions }} / {{ preview.totalLines }}
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Use</th>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Category</th>
+            @if (hasPossibleDuplicates()) {
+              <th>
+                Possible Duplicate
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of preview.items; track $index) {
+            <tr>
+              <td><input type="checkbox" [(ngModel)]="selected[$index]" /></td>
+              <td>{{ item.dueDate ? (item.dueDate | date: 'dd/MM/yyyy') : '-' }}</td>
+              <td>{{ item.title || item.rawLine }}</td>
+              <td>{{ item.amount ?? '-' }}</td>
+              <td>
+                <select [(ngModel)]="item.type">
+                  <option value="expense">Expense</option>
+                  <option value="income">Income</option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="item.suggestedCategoryId">
+                  <option [ngValue]="null">Select</option>
+                  @for (cat of categories; track cat.id) {
+                    <option [value]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+              </td>
+              @if (hasPossibleDuplicates()) {
+                <td>
+                  @if (item.isPossibleDuplicate) {
+                    <span class="duplicate-warning">⚠️ Possible duplicate</span>
+                  }                
+                  @else {
+                    <span>-</span>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

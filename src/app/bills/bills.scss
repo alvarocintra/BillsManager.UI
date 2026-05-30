@@ -113,6 +113,19 @@
   font-size: 0.95rem;
   table-layout: auto;
 
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    &:active {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
   th:nth-child(1),
   td:nth-child(1) {
     width: 20%;

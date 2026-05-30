@@ -16,6 +16,12 @@
     <app-chart [chartTitle]="'Bills per Category'" [chartType]="'bar'" [chartData]="chartBillsPerCategory"
         [legend]="true">
     </app-chart>
+    <app-chart [chartTitle]="'Monthly Expenses by Category (Stacked)'" 
+               [chartType]="'bar'" 
+               [chartData]="chartDataStackedByMonth"
+               [chartOptions]="stackedBarOptions"
+               [legend]="true">
+    </app-chart>
 </div>
 <!-- <app-chart
   [chartTitle]="'Total per Year'"

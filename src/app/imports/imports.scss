@@ -1,0 +1,32 @@
+.imports-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.message {
+  color: #1f5d3a;
+}
+
+.table-wrap {
+  overflow: auto;
+  max-height: 65vh;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border-bottom: 1px solid #ececec;
+  padding: 8px;
+  text-align: left;
+}

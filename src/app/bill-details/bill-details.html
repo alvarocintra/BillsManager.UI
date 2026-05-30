@@ -1,6 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bill-details-form">
   <h2 class="form-title"><fa-icon [icon]="faMoneyBill"></fa-icon> Bill Details</h2>
   <div class="form-group">
+    <label for="type">Type</label>
+    <select id="type" formControlName="type">
+      <option value="expense">Expense</option>
+      <option value="income">Income</option>
+    </select>
+  </div>
+
+  <div class="form-group">
     <label for="title">Title</label>
     <input id="title" type="text" formControlName="title" placeholder="Enter bill title" />
     @let titleCtrl = form.get('title');

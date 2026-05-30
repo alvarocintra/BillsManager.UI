@@ -2,6 +2,7 @@ import { Category } from "./category.model";
 
 export class Bill {
     id: string;
+    type: 'expense' | 'income';
     title: string;
     amount: number;
     dueDate: Date;
@@ -16,6 +17,7 @@ export class Bill {
     
     constructor(
         id: string,
+        type: 'expense' | 'income',
         title: string,
         amount: number,
         dueDate: Date,
@@ -29,6 +31,7 @@ export class Bill {
         updatedAt?: Date
     ) {
         this.id = id;
+        this.type = type;
         this.title = title;
         this.amount = amount;
         this.dueDate = dueDate;

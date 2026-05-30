@@ -27,7 +27,8 @@ export class CategoryDetails implements OnInit {
     private repo: CategoriesRepository
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required]
+      name: ['', Validators.required],
+      keywords: ['']
     });
   }
 
@@ -51,7 +52,7 @@ export class CategoryDetails implements OnInit {
   }
 
   addCategory() {
-    const newCategory = this.form.value;
+    const newCategory = this.toPayload() as Category;
     this.repo.addCategory(newCategory)
       .pipe(finalize(() => {
         this.cdr.detectChanges();
@@ -68,10 +69,24 @@ export class CategoryDetails implements OnInit {
   }
 
   updateCategory() {
-    const updatedCategory = {
-      ...this.category,
-      ...this.form.value
-    };
+    const categoryId = this.category?.id;
+    if (!categoryId) {
+      console.error('Category id is required to update.');
+      return;
+    }
+
+    const payload = this.toPayload();
+    const updatedCategory = new Category(
+      categoryId,
+      payload.name,
+      payload.keywords,
+      this.category?.description,
+      this.category?.icon,
+      this.category?.color,
+      this.category?.createdAt,
+      this.category?.updatedAt
+    );
+
     this.repo.updateCategory(updatedCategory)
       .pipe(finalize(() => {
         this.cdr.detectChanges();
@@ -96,7 +111,8 @@ export class CategoryDetails implements OnInit {
       next: (category) => {
         this.category = category;
         this.form.patchValue({
-          name: category.name
+          name: category.name,
+          keywords: (category.keywords || []).join(', ')
         });
       },
       error: (err) => {
@@ -107,5 +123,18 @@ export class CategoryDetails implements OnInit {
 
   goBack() {
     window.history.back();
+  }
+
+  private toPayload() {
+    const formValue = this.form.value;
+    const keywords = String(formValue.keywords || '')
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
+
+    return {
+      name: formValue.name,
+      keywords
+    };
   }
 }
