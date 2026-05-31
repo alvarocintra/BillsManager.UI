@@ -170,4 +170,9 @@ export class Bills implements OnInit {
       this.router.navigate(['/bills', billId]);
     }
   }
+
+  onPageSizeChange() {
+    this.currentPage = 1;
+    this.loadBills();
+  }
 }

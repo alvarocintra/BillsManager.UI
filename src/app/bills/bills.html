@@ -142,13 +142,29 @@
   </div>
   <!-- @if (totalPages > 1) { -->
   <div class="pagination">
-    <button (click)="previousPage()" [disabled]="currentPage === 1">
-      <fa-icon [icon]="faChevronLeft"></fa-icon>
-    </button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">
-      <fa-icon [icon]="faChevronRight"></fa-icon>
-    </button>
+    <div class="empty-space"></div>
+
+    <div class="pagination-controls">
+      <button (click)="previousPage()" [disabled]="currentPage === 1">
+        <fa-icon [icon]="faChevronLeft"></fa-icon>
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <fa-icon [icon]="faChevronRight"></fa-icon>
+      </button>
+    </div>
+
+    <div class="page-size">
+      <label for="pageSize">Items per page:</label>
+      <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="9999999">All</option>
+      </select>
+    </div>
   </div>
   <!-- } -->
 </div>

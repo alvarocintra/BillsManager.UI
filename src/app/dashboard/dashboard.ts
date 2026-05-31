@@ -19,7 +19,7 @@ export class Dashboard implements OnInit {
   bills: Bill[] = [];
   totalItems = 0;
   currentPage = 1;
-  pageSize = 1000;
+  pageSize = 9999999;
   filters: BillsFilter = {
     title: '',
     paid: '',
@@ -30,7 +30,7 @@ export class Dashboard implements OnInit {
     toAmount: undefined
   };
 
-  sortColumn: string = 'createdAt';
+  sortColumn: string = 'dueDate';
   sortDirection: 'asc' | 'desc' = 'desc';
 
   faChartBar = faChartBar;
@@ -109,46 +109,32 @@ export class Dashboard implements OnInit {
     }
   };
 
-  testWithMockData() {
-  setTimeout(() => {
-    this.chartDataStackedByMonth = {
-      labels: ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025'],
-      datasets: [
-        {
-          label: 'Entreterimento',
-          data: [50, 60, 45, 70, 55],
-          backgroundColor: '#ffa726',
-          stack: 'stack-1'
-        },
-        {
-          label: 'Food',
-          data: [200, 180, 220, 190, 210],
-          backgroundColor: '#66bb6a',
-          stack: 'stack-1'
-        },
-        {
-          label: 'Transport',
-          data: [80, 90, 75, 85, 95],
-          backgroundColor: '#42a5f5',
-          stack: 'stack-1'
-        }
-      ]
-    };
-    this.cdr.detectChanges();
-    console.log('Mock data set:', this.chartDataStackedByMonth);
-  }, 1000);
-  }
-
   constructor(
     private billsRepository: BillsRepository,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    //this.testWithMockData();
     this.getBills();
   }
 
   getBills() {
+    const requestParams = {
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+      title: this.filters.title,
+      type: this.filters.type,
+      category: this.filters.category,
+      paid: this.filters.paid,
+      fromDueDate: this.filters.fromDueDate,
+      toDueDate: this.filters.toDueDate,
+      fromAmount: this.filters.fromAmount,
+      toAmount: this.filters.toAmount,
+      sortBy: this.sortColumn,
+      sortOrder: this.sortDirection
+    };
+
+    console.log('Fetching bills with params:', requestParams);
+
     this.billsRepository.getBills(
       this.currentPage,
       this.pageSize,
@@ -272,32 +258,35 @@ export class Dashboard implements OnInit {
     this.cdr.detectChanges();
   }
 
-// 2. TOTAL PER CATEGORY (CORRIGIDO)
-setChartDataTotalPerCategory() {
-  const categoryTotals: Record<string, number> = {};
+  setChartDataTotalPerCategory() {
+    const categoryTotals: Record<string, number> = {};
 
-  for (const bill of this.bills) {
-    const catName = bill.category?.name ?? 'Uncategorized';
-    if (bill.type === 'income') {
-      categoryTotals[catName] = (categoryTotals[catName] || 0) + bill.amount;
-    } else if (bill.type === 'expense') {
-      categoryTotals[catName] = (categoryTotals[catName] || 0) - bill.amount;
+    for (const bill of this.bills.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())) {
+      const catName = bill.category?.name ?? 'Uncategorized';
+      if (bill.type === 'income') {
+        console.log(`Income for ${catName}: ${bill.amount} - ${bill.dueDate}`);
+        categoryTotals[catName] = (categoryTotals[catName] || 0) + bill.amount;
+      } else if (bill.type === 'expense') {
+        categoryTotals[catName] = (categoryTotals[catName] || 0) - bill.amount;
+      }
     }
-  }
 
-  const labels = Object.keys(categoryTotals);
-  const data = Object.values(categoryTotals);
+    console.log('=== DEBUG CATEGORY TOTALS ===');
+    console.log('Category Totals:', categoryTotals);
+
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
   
-  this.chartDataTotalPerCategory = {
-    labels: labels,
-    datasets: [{
-      label: 'Total Amount',
-      data: data,
-      backgroundColor: '#42a5f5',
-      borderColor: '#42a5f5',
-      borderWidth: 1
-    }]
-  };
+    this.chartDataTotalPerCategory = {
+      labels: labels,
+      datasets: [{
+        label: 'Total Amount',
+        data: data,
+        backgroundColor: '#42a5f5',
+        borderColor: '#42a5f5',
+        borderWidth: 1
+      }]
+    };
   
   this.cdr.detectChanges();
 }

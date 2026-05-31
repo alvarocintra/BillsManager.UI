@@ -228,11 +228,44 @@
 
 .pagination {
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* Empurra os blocos para as extremidades */
   align-items: center;
-  gap: 1rem;
+  width: 100%;
   margin-top: 1rem;
+  gap: 1rem;
 
+  // Garante o equilíbrio para o centro ficar realmente no centro
+  .empty-space {
+    flex: 1;
+    display: block;
+  }
+
+  // Bloco centralizado
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  // Bloco da direita
+  .page-size {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Alinha o select totalmente à direita */
+    gap: 0.5rem;
+
+    select {
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+  }
+
+  // Estilos dos botões (limpos e corrigidos)
   button {
     background-color: #2c3e50;
     color: white;
@@ -254,6 +287,26 @@
 
   span {
     font-weight: bold;
+    white-space: nowrap; /* Evita que o texto quebre linha */
+  }
+
+  // --- Regra para Mobile (Telas de até 768px) ---
+  @media (max-width: 768px) {
+    flex-direction: column; /* Empilha os elementos */
+    gap: 1rem;
+
+    .empty-space {
+      display: none; /* Esconde o espaço vazio no mobile */
+    }
+
+    .page-size {
+      justify-content: center; /* Centraliza o select no mobile */
+      width: 100%;
+    }
+    
+    .pagination-controls {
+      width: 100%;
+    }
   }
 }
 

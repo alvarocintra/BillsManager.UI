@@ -7,6 +7,6 @@ export const serverRoutes: ServerRoute[] = [
   // As restantes continuam a ser pré-renderizadas
   {
     path: '**',
-    renderMode: RenderMode.Prerender
+    renderMode: RenderMode.Server
   }
 ];
