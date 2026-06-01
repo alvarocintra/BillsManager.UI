@@ -24,6 +24,7 @@
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/angular-fontawesome": "^2.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "angular-jwt": "github:auth0/angular-jwt",
     "chart.js": "^4.4.9",
     "express": "^5.1.0",
     "ng-bootstrap": "^1.6.3",

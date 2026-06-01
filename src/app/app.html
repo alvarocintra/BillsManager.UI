@@ -1,48 +1,58 @@
-<button class="sidebar-toggle" (click)="toggleSidebar()">
-  @if (sidebarOpen) {
-    <fa-icon [icon]="faTimes"></fa-icon>
-  } @else {
-    <fa-icon [icon]="faBars"></fa-icon>
-  }
-</button>
-<div class="app-container">
-  <nav class="sidebar" [class.collapsed]="!sidebarOpen">
-    <div class="sidebar-logo">
-      <img src="logo.png" alt="Duofy Logo" width="50%" />
-    </div>
-    <ul class="nav-list">
-      <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-
-      <li (click)="toggleManage()" class="submenu-toggle">
-        <span>Manage Bills</span>
-        <fa-icon [icon]="faChevronDown" [class.rotated]="manageOpen" class="chevron"></fa-icon>
-      </li>
-      @if (manageOpen) {
-      <ul class="submenu">
-        <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
-        <li><a routerLink="/bills" routerLinkActive="active">Bills</a></li>
-        <li><a routerLink="/imports" routerLinkActive="active">Import Statement</a></li>
-      </ul>
-      }
-
-    </ul>
-
-    @if (isAuthenticated && currentUser) {
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
-        <span class="user-email">{{ currentUser.email }}</span>
+<div class="app-shell">
+  @if (isAuthenticated) {
+  <header class="topbar" [class.scrolled]="isScrolled">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="logo.png" alt="Duofy Logo" width="42" height="42" />
+        <span>Duofy</span>
       </div>
-      <button class="logout-btn" (click)="logout()" title="Logout">
-        <fa-icon [icon]="faSignOutAlt"></fa-icon>
-        <span>Logout</span>
-      </button>
-    </div>
-    }
-  </nav>
 
-  <!-- Main content -->
-  <main class="main-content">
+      <button class="nav-toggle" (click)="toggleSidebar()" aria-label="Toggle navigation">
+        @if (sidebarOpen) {
+          <fa-icon [icon]="faTimes"></fa-icon>
+        } @else {
+          <fa-icon [icon]="faBars"></fa-icon>
+        }
+      </button>
+
+      <nav class="topnav" [class.open]="sidebarOpen">
+        <ul class="nav-list">
+          <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+
+          <li class="submenu-wrap">
+            <button type="button" class="submenu-toggle" (click)="toggleManage()">
+              <span>Manage Bills</span>
+              <fa-icon [icon]="faChevronDown" [class.rotated]="manageOpen" class="chevron"></fa-icon>
+            </button>
+
+            @if (manageOpen) {
+            <ul class="submenu">
+              <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+              <li><a routerLink="/bills" routerLinkActive="active">Bills</a></li>
+              <li><a routerLink="/imports" routerLinkActive="active">Import Statement</a></li>
+            </ul>
+            }
+          </li>
+        </ul>
+
+        @if (currentUser) {
+        <div class="nav-user">
+          <div class="user-info">
+            <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
+            <span class="user-email">{{ currentUser.email }}</span>
+          </div>
+          <button class="logout-btn" (click)="logout()" title="Logout">
+            <fa-icon [icon]="faSignOutAlt"></fa-icon>
+            <span>Logout</span>
+          </button>
+        </div>
+        }
+      </nav>
+    </div>
+  </header>
+  }
+
+  <main class="main-content" [class.with-topbar]="isAuthenticated">
     <router-outlet></router-outlet>
   </main>
 </div>

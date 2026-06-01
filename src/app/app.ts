@@ -1,4 +1,4 @@
-import { afterNextRender, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { afterNextRender, ChangeDetectorRef, Component, HostListener, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faChevronDown, faTimes, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -27,10 +27,12 @@ export class App implements OnChanges, OnInit {
   public sidebarOpen = true;
   currentUser: any = null;
   isAuthenticated = false;
+  isScrolled = false;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
     afterNextRender(() => {
       this.setSidebarOpen();
+      this.updateScrollState();
     });
   }
 
@@ -38,12 +40,17 @@ export class App implements OnChanges, OnInit {
     this.currentUser = this.authService.getCurrentUser();
     this.isAuthenticated = this.authService.isAuthenticated();
 
+    console.log('Initial authentication status:', this.isAuthenticated);
+
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.cdr.detectChanges();
     });
 
     this.authService.isAuthenticated$.subscribe(isAuth => {
       this.isAuthenticated = isAuth;
+      console.log('Authentication status changed:', isAuth);
+      this.cdr.detectChanges();
     });
   }
 
@@ -75,5 +82,14 @@ export class App implements OnChanges, OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.updateScrollState();
+  }
+
+  private updateScrollState(): void {
+    this.isScrolled = window.scrollY > 8;
   }
 }

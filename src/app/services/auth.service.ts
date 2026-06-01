@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { LoginResponse, RegisterRequest, UserInfo } from '../models/auth.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,14 @@ import { LoginResponse, RegisterRequest, UserInfo } from '../models/auth.models'
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'user_info';
-  private readonly API_URL = 'http://localhost:5000/api/auth';
+  private readonly API_URL = environment.apiUrl + '/auth';
+  private expirationTimer: ReturnType<typeof setTimeout> | null = null;
   
   private jwtHelper = new JwtHelperService();
-  private currentUserSubject = new BehaviorSubject<any>(this.getUserFromStorage());
+  private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(
@@ -28,7 +30,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
-      this.checkTokenExpiration();
+      this.restoreSession();
     }
   }
 
@@ -54,6 +56,10 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
     }
+    if (this.expirationTimer) {
+      clearTimeout(this.expirationTimer);
+      this.expirationTimer = null;
+    }
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
@@ -67,7 +73,9 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
-    return localStorage.getItem(this.TOKEN_KEY);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    console.log('Retrieved token from storage:', token);
+    return token || '';
   }
 
   getCurrentUser(): any {
@@ -99,6 +107,7 @@ export class AuthService {
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
         this.currentUserSubject.next(user);
         this.isAuthenticatedSubject.next(true);
+        this.scheduleTokenExpirationCheck(response.token);
       }
     }
   }
@@ -122,6 +131,42 @@ export class AuthService {
     return true;
   }
 
+  private restoreSession(): void {
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (!token || this.jwtHelper.isTokenExpired(token)) {
+      this.currentUserSubject.next(null);
+      this.isAuthenticatedSubject.next(false);
+      return;
+    }
+
+    const user = this.getUserFromStorage();
+    this.currentUserSubject.next(user);
+    this.isAuthenticatedSubject.next(true);
+    this.scheduleTokenExpirationCheck(token);
+  }
+
+  private scheduleTokenExpirationCheck(token: string): void {
+    if (this.expirationTimer) {
+      clearTimeout(this.expirationTimer);
+      this.expirationTimer = null;
+    }
+
+    const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
+    if (!expirationDate) {
+      return;
+    }
+
+    const timeToExpiration = expirationDate.getTime() - Date.now();
+    if (timeToExpiration <= 0) {
+      this.logout();
+      return;
+    }
+
+    this.expirationTimer = setTimeout(() => {
+      this.logout();
+    }, timeToExpiration);
+  }
+
   private checkTokenExpiration(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -129,17 +174,7 @@ export class AuthService {
     
     const token = localStorage.getItem(this.TOKEN_KEY);
     if (token) {
-      const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
-      if (expirationDate) {
-        const timeToExpiration = expirationDate.getTime() - Date.now();
-        if (timeToExpiration > 0) {
-          setTimeout(() => {
-            this.logout();
-          }, timeToExpiration);
-        } else {
-          this.logout();
-        }
-      }
+      this.scheduleTokenExpirationCheck(token);
     }
   }
 
