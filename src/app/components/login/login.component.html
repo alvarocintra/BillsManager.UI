@@ -1,0 +1,212 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>{{ isLoginMode ? 'Login' : 'Register' }}</h1>
+      <p class="toggle-text">
+        {{ isLoginMode ? "Don't have an account?" : 'Already have an account?' }}
+        <button type="button" class="toggle-button" (click)="toggleMode()">
+          {{ isLoginMode ? 'Register' : 'Login' }}
+        </button>
+      </p>
+    </div>
+
+    @if (isLoginMode) {
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="loginEmail">Email Address</label>
+        <input
+          id="loginEmail"
+          type="email"
+          class="form-control"
+          [class.is-invalid]="submitted && loginEmail?.invalid"
+          formControlName="email"
+          placeholder="Enter your email"
+        />
+        @if (submitted && loginEmail?.invalid) {
+        <div class="invalid-feedback">
+          @if (loginEmail?.errors?.['required']) {
+          <span>Email is required</span>
+          } @else if (loginEmail?.errors?.['email']) {
+          <span>Please enter a valid email address</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <div class="password-input-wrapper">
+          <input
+            id="loginPassword"
+            [type]="showLoginPassword ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="submitted && loginPassword?.invalid"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility('login')"
+            tabindex="-1"
+          >
+            <span class="toggle-icon">
+              {{ showLoginPassword ? '👁️' : '👁️‍🗨️' }}
+            </span>
+          </button>
+        </div>
+        @if (submitted && loginPassword?.invalid) {
+        <div class="invalid-feedback">
+          @if (loginPassword?.errors?.['required']) {
+          <span>Password is required</span>
+          } @else if (loginPassword?.errors?.['minlength']) {
+          <span>Password must be at least 8 characters</span>
+          }
+        </div>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="isLoading"
+      >
+        @if (isLoading) {
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Logging in...
+        } @else {
+        Login
+        }
+      </button>
+    </form>
+    } @else {
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <div class="form-row">
+        <div class="form-group form-col-half">
+          <label for="firstName">First Name</label>
+          <input
+            id="firstName"
+            type="text"
+            class="form-control"
+            formControlName="firstName"
+            placeholder="First name (optional)"
+          />
+        </div>
+        <div class="form-group form-col-half">
+          <label for="lastName">Last Name</label>
+          <input
+            id="lastName"
+            type="text"
+            class="form-control"
+            formControlName="lastName"
+            placeholder="Last name (optional)"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="registerEmail">Email Address</label>
+        <input
+          id="registerEmail"
+          type="email"
+          class="form-control"
+          [class.is-invalid]="submitted && registerEmail?.invalid"
+          formControlName="email"
+          placeholder="Enter your email"
+        />
+        @if (submitted && registerEmail?.invalid) {
+        <div class="invalid-feedback">
+          @if (registerEmail?.errors?.['required']) {
+          <span>Email is required</span>
+          } @else if (registerEmail?.errors?.['email']) {
+          <span>Please enter a valid email address</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <div class="password-input-wrapper">
+          <input
+            id="registerPassword"
+            [type]="showRegisterPassword ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="submitted && registerPassword?.invalid"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility('register')"
+            tabindex="-1"
+          >
+            <span class="toggle-icon">
+              {{ showRegisterPassword ? '👁️' : '👁️‍🗨️' }}
+            </span>
+          </button>
+        </div>
+        @if (submitted && registerPassword?.invalid) {
+        <div class="invalid-feedback">
+          @if (registerPassword?.errors?.['required']) {
+          <span>Password is required</span>
+          } @else if (registerPassword?.errors?.['minlength']) {
+          <span>Password must be at least 8 characters</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-input-wrapper">
+          <input
+            id="confirmPassword"
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="submitted && (registerConfirmPassword?.invalid || registerForm.errors?.['passwordMismatch'])"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility('confirm')"
+            tabindex="-1"
+          >
+            <span class="toggle-icon">
+              {{ showConfirmPassword ? '👁️' : '👁️‍🗨️' }}
+            </span>
+          </button>
+        </div>
+        @if (submitted && registerConfirmPassword?.invalid) {
+        <div class="invalid-feedback">
+          @if (registerConfirmPassword?.errors?.['required']) {
+          <span>Please confirm your password</span>
+          }
+        </div>
+        }
+        @if (submitted && registerForm.errors?.['passwordMismatch']) {
+        <div class="invalid-feedback">
+          <span>Passwords do not match</span>
+        </div>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="isLoading"
+      >
+        @if (isLoading) {
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Registering...
+        } @else {
+        Register
+        }
+      </button>
+    </form>
+    }
+  </div>
+</div>

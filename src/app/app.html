@@ -26,6 +26,19 @@
       }
 
     </ul>
+
+    @if (isAuthenticated && currentUser) {
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
+        <span class="user-email">{{ currentUser.email }}</span>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Logout">
+        <fa-icon [icon]="faSignOutAlt"></fa-icon>
+        <span>Logout</span>
+      </button>
+    </div>
+    }
   </nav>
 
   <!-- Main content -->
