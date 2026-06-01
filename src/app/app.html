@@ -6,7 +6,6 @@
   }
 </button>
 <div class="app-container">
-  <!-- Sidebar -->
   <nav class="sidebar" [class.collapsed]="!sidebarOpen">
     <div class="sidebar-logo">
       <img src="logo.png" alt="Duofy Logo" width="50%" />
@@ -14,7 +13,6 @@
     <ul class="nav-list">
       <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
 
-      <!-- Manage Bills with submenu -->
       <li (click)="toggleManage()" class="submenu-toggle">
         <span>Manage Bills</span>
         <fa-icon [icon]="faChevronDown" [class.rotated]="manageOpen" class="chevron"></fa-icon>

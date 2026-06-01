@@ -3,6 +3,7 @@ import { appConfig } from './app/app.config';
 import { App } from './app/app';
 import {
   Chart,
+  registerables,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -15,6 +16,7 @@ Chart.defaults.font.family = 'Poppins, sans-serif';
 Chart.defaults.font.size = 14;
 Chart.defaults.font.weight = 'normal';
 
+Chart.register(...registerables);
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 bootstrapApplication(App, appConfig)

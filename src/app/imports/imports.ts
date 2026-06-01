@@ -6,6 +6,7 @@ import { Category } from '../models/category.model';
 import { ImportCommitRequest, ImportPreviewItem, ImportPreviewResult } from '../models/import-preview.model';
 import { CategoriesRepository } from '../services/categories.repository';
 import { ImportsRepository } from '../services/imports.repository';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-imports',
@@ -26,7 +27,8 @@ export class Imports {
   constructor(
     private importsRepo: ImportsRepository,
     private categoriesRepo: CategoriesRepository,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastrService
   ) {
     this.loadCategories();
   }
@@ -58,9 +60,11 @@ export class Imports {
           result.items.forEach((item, idx) => {
             this.selected[idx] = item.isParsedAsTransaction && !item.isPossibleDuplicate;
           });
+          this.toastr.info('Preview generated successfully!', 'Info');
         },
         error: () => {
           this.message = 'Erro ao gerar preview.';
+          this.toastr.error('Error generating preview.', 'Error');
         }
       });
   }
@@ -93,9 +97,11 @@ export class Imports {
       .subscribe({
         next: (result) => {
           this.message = `Importacao concluida. Salvos: ${result.savedCount}, ignorados: ${result.ignoredCount}.`;
+          this.toastr.success(this.message, 'Success');
         },
         error: () => {
           this.message = 'Erro ao confirmar importacao.';
+          this.toastr.error(this.message, 'Error');
         }
       });
   }

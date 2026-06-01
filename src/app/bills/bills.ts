@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Category } from '../models/category.model';
 import { CategoriesRepository } from '../services/categories.repository';
 import { BillsFilter } from '../models/bills-filter.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bills',
@@ -54,7 +55,8 @@ export class Bills implements OnInit {
     private repo: BillsRepository,
     private categoriesRepo: CategoriesRepository,
     private router: Router,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -113,7 +115,7 @@ export class Bills implements OnInit {
           this.totalPages = result.totalPages || Math.ceil(this.totalItems / this.pageSize);
         },
         error: (err) => {
-          console.error('Error loading bills:', err);
+          this.toastr.error('Error loading bills.', 'Error');
         }
       });
   }
@@ -128,7 +130,7 @@ export class Bills implements OnInit {
           this.categories = result;
         },
         error: (err) => {
-          console.error('Error loading categories:', err);
+          this.toastr.error('Error loading categories.', 'Error');
         }
       });
   }

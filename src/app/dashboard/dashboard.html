@@ -1,10 +1,55 @@
-<div class="dashboard-header">
-    <h1>
-        <fa-icon [icon]="faChartBar"></fa-icon>
-        Dashboard
-    </h1>
-</div>
 <div class="dashboard-container">
+    <h1><fa-icon [icon]="faChartBar"></fa-icon> Dashboard</h1>
+
+    <div class="kpi-cards">
+        <div class="card kpi-card" [class.saldo-card]="balance >= 0"
+             [class.positive-balance]="balance > 0"
+             [class.negative-balance]="balance < 0"
+             [class.zero-balance]="balance === 0">
+            <div class="icon"><fa-icon [icon]="faMoneyBill"></fa-icon></div>
+            <div class="value">{{ formatCurrency(balance) }}</div>
+            <small>Available Balance</small>
+        </div>
+
+        <!-- Card Receitas -->
+        <div class="card kpi-card receita-card">
+            <div class="icon"><fa-icon [icon]="faArrowUp"></fa-icon></div>
+            <div class="value">{{ formatCurrency(totalRevenue) }}</div>
+            <small>Total Revenue</small>
+        </div>
+
+        <!-- Card Gastos -->
+        <div class="card kpi-card gasto-card">
+            <div class="icon"><fa-icon [icon]="faArrowDown"></fa-icon></div>
+            <div class="value">{{ formatCurrency(totalExpenses) }}</div>
+            <small>Total Expenses</small>
+        </div>
+    </div>
+
+    <!-- Seção de Metas e Progresso -->
+    <div class="secao-meta">
+        <h3><fa-icon [icon]="faBullseye"></fa-icon> Economy Goal</h3>
+        
+        <div class="meta-info">
+            <div class="meta-valor">{{ formatCurrency(savingsGoal) }}</div>
+            <small>Total Goal</small>
+        </div>
+
+        <div class="progress-bar-container">
+            <div 
+                class="progress-bar" 
+                [style.width.%]="economyProgressPercentage">
+            </div>
+        </div>
+
+        <div class="progress-text">
+            <small>You have already saved {{ formatCurrency(balance) }}</small>
+            <span class="percent-indicador">{{ economyProgressPercentage.toFixed(2) }}% Complete</span>
+        </div>
+    </div>
+</div>
+
+<div class="chart-dashboard-container">
     <app-chart [chartTitle]="'Total per Category'" [chartType]="'bar'" [chartData]="chartDataTotalPerCategory"
         [legend]="true">
     </app-chart>
@@ -20,48 +65,22 @@
                [chartType]="'bar'" 
                [chartData]="chartDataStackedByMonth"
                [chartOptions]="stackedBarOptions"
+               [legend]="false">
+    </app-chart>
+    <app-chart [chartTitle]="'Monthly Cash Flow (Income vs Expense)'" 
+               [chartType]="'bar'" 
+               [chartData]="chartDataIncomeVsExpense"
                [legend]="true">
     </app-chart>
+    <app-chart [chartTitle]="'Spending Distribution by Category'" 
+               [chartType]="'doughnut'" 
+               [chartData]="chartDataExpenseDistribution"
+               [legend]="true">
+    </app-chart>
+    <app-chart 
+                [chartTitle]="'Month-over-Month Expense Trend'" 
+                [chartType]="'bar'" 
+                [chartData]="chartDataMoMExpenses"
+                [legend]="true">
+    </app-chart>
 </div>
-<!-- <app-chart
-  [chartTitle]="'Total per Year'"
-  [chartType]="'line'"
-  [chartData]="chartDataTotalPerYear"
-  [legend]="true">
-</app-chart>
-<app-chart
-  [chartTitle]="'Total per Day'"
-  [chartType]="'line'"
-  [chartData]="chartDataTotalPerDay"
-  [legend]="true">
-</app-chart> -->
-
-<!-- <div class="dashboard-container">
-  <div class="dashboard-header">
-    <h1>Dashboard</h1>
-    <p>Welcome to your financial dashboard!</p>
-  </div>
-
-  <div class="dashboard-cards">
-    <app-card title="Total Income" [value]="totalIncome | currency"></app-card>
-    <app-card title="Total Expenses" [value]="totalExpenses | currency"></app-card>
-    <app-card title="Net Savings" [value]="netSavings | currency"></app-card>
-  </div>
-
-  <div class="dashboard-charts">
-    <app-expense-chart></app-expense-chart>
-    <app-income-chart></app-income-chart>
-  </div>
-    <div class="dashboard-recent">
-        <h2>Recent Transactions</h2>
-        <app-recent-transactions></app-recent-transactions>
-    </div>
-    <div class="dashboard-actions">
-        <button class="action-btn" (click)="goToAddBill()">
-            <fa-icon [icon]="faPlus"></fa-icon> Add Bill
-        </button>
-        <button class="action-btn" (click)="goToAddCategory()">
-            <fa-icon [icon]="faPlus"></fa-icon> Add Category
-        </button>
-    </div>
-</div> -->

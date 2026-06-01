@@ -11,10 +11,15 @@ import { faMoneyBill, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
 import { ConfirmDialogComponent } from '../shared/confirmation-modal.component/confirmation-modal.component';
 import { ConfirmDialogService } from '../services/confirm-dialog.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bill-details',
-  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    FontAwesomeModule,
+  ],
   templateUrl: './bill-details.html',
   styleUrl: './bill-details.scss',
   standalone: true,
@@ -34,6 +39,7 @@ export class BillDetails {
     private repo: BillsRepository,
     private categoriesRepo: CategoriesRepository,
     private confirmDialog: ConfirmDialogService,
+    private toastr: ToastrService
   ) {
     this.form = this.fb.group({
       type: ['expense', Validators.required],
@@ -82,14 +88,14 @@ export class BillDetails {
           }
         },
         error: (err) => {
-          console.error('Error loading categories:', err);
+          this.toastr.error('Error loading categories.', 'Error');
         }
       });
   }
 
   onSubmit() {
     if (this.form.invalid) {
-      console.error('Form is invalid');
+      this.toastr.error('Form is invalid.', 'Error');
       return;
     }
     if (this.bill && this.bill.id) {
@@ -107,11 +113,11 @@ export class BillDetails {
       }))
       .subscribe({
         next: (bill) => {
-          console.log('Bill added successfully:', bill);
+          this.toastr.success('Bill added successfully!', 'Success');
           this.goBack();
         },
         error: (err) => {
-          console.error('Error adding bill:', err);
+          this.toastr.error('Error adding bill.', 'Error');
         }
       });
   }
@@ -127,11 +133,11 @@ export class BillDetails {
       }))
       .subscribe({
         next: (bill) => {
-          console.log('Bill updated successfully:', bill);
+          this.toastr.success('Bill updated successfully!', 'Success');
           this.goBack();
         },
         error: (err) => {
-          console.error('Error updating bill:', err);
+          this.toastr.error('Error updating bill.', 'Error');
         }
       });
   }
@@ -158,7 +164,7 @@ export class BillDetails {
           });
         },
         error: (err) => {
-          console.error('Error fetching bill details:', err);
+          this.toastr.error('Error fetching bill details.', 'Error');
         }
       });
   }
@@ -177,10 +183,10 @@ export class BillDetails {
       }))
       .subscribe({
         next: () => {
-          console.log('Bill deleted successfully');
+          this.toastr.success('Bill deleted successfully!', 'Success');
         },
         error: (err) => {
-          console.error('Error deleting bill:', err);
+          this.toastr.error('Error deleting bill.', 'Error');
         }
       });
   }

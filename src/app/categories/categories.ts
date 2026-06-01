@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faTrash, faEye, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { Category } from '../models/category.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-categories',
@@ -23,7 +24,8 @@ export class Categories implements OnInit {
   constructor(
     private repo: CategoriesRepository,
     private router: Router,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -41,7 +43,7 @@ export class Categories implements OnInit {
           this.categories = categories;
         },
         error: (err) => {
-          console.error('Error loading categories:', err);
+          this.toastr.error('Error loading categories.', 'Error');
         }
       });
   }
@@ -58,10 +60,10 @@ export class Categories implements OnInit {
       }))
       .subscribe({
         next: () => {
-          console.log('Category deleted successfully');
+          this.toastr.success('Category deleted successfully!', 'Success');
         },
         error: (err) => {
-          console.error('Error deleting category:', err);
+          this.toastr.error('Error deleting category.', 'Error');
         }
       });
   }

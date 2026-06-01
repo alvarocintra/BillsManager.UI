@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faScroll } from '@fortawesome/free-solid-svg-icons';
 import { Category } from '../models/category.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   standalone: true,
@@ -24,7 +25,8 @@ export class CategoryDetails implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private repo: CategoriesRepository
+    private repo: CategoriesRepository,
+    private toastr: ToastrService
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -59,11 +61,11 @@ export class CategoryDetails implements OnInit {
       }))
       .subscribe({
         next: (category) => {
-          console.log('Category added successfully:', category);
+          this.toastr.success('Category added successfully!', 'Success');
           this.goBack();
         },
         error: (err) => {
-          console.error('Error adding category:', err);
+          this.toastr.error('Error adding category.', 'Error');
         }
       });
   }
@@ -71,7 +73,7 @@ export class CategoryDetails implements OnInit {
   updateCategory() {
     const categoryId = this.category?.id;
     if (!categoryId) {
-      console.error('Category id is required to update.');
+      this.toastr.error('Category id is required to update.', 'Error');
       return;
     }
 
@@ -93,11 +95,11 @@ export class CategoryDetails implements OnInit {
       }))
       .subscribe({
         next: (category) => {
-          console.log('Category updated successfully:', category);
+          this.toastr.success('Category updated successfully!', 'Success');
           this.goBack();
         },
         error: (err) => {
-          console.error('Error updating category:', err);
+          this.toastr.error('Error updating category.', 'Error');
         }
       });
   }
@@ -116,7 +118,7 @@ export class CategoryDetails implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error fetching category details:', err);
+        this.toastr.error('Error fetching category details.', 'Error');
       }
     });
   }
