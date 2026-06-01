@@ -24,7 +24,7 @@ export class Dashboard implements OnInit {
   currentPage = 1;
   pageSize = 9999999;
   balance = 0;
-  savingsGoal = 100000.00;
+  savingsGoal = 50000.00;
   startingBalance = 0;
   economyProgressPercentage = 0;
   totalRevenue = 0;

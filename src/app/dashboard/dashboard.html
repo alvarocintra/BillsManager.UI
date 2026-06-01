@@ -10,15 +10,11 @@
             <div class="value">{{ formatCurrency(balance) }}</div>
             <small>Available Balance</small>
         </div>
-
-        <!-- Card Receitas -->
         <div class="card kpi-card receita-card">
             <div class="icon"><fa-icon [icon]="faArrowUp"></fa-icon></div>
             <div class="value">{{ formatCurrency(totalRevenue) }}</div>
             <small>Total Revenue</small>
         </div>
-
-        <!-- Card Gastos -->
         <div class="card kpi-card gasto-card">
             <div class="icon"><fa-icon [icon]="faArrowDown"></fa-icon></div>
             <div class="value">{{ formatCurrency(totalExpenses) }}</div>
@@ -26,7 +22,6 @@
         </div>
     </div>
 
-    <!-- Seção de Metas e Progresso -->
     <div class="secao-meta">
         <h3><fa-icon [icon]="faBullseye"></fa-icon> Economy Goal</h3>
         
