@@ -45,16 +45,10 @@
 </div>
 
 <div class="chart-dashboard-container">
-    <app-chart [chartTitle]="'Total per Category'" [chartType]="'bar'" [chartData]="chartDataTotalPerCategory"
-        [legend]="true">
-    </app-chart>
-    <app-chart [chartTitle]="'Total per Month'" [chartType]="'line'" [chartData]="chartDataTotalPerMonth"
-        [legend]="true">
-    </app-chart>
-    <app-chart [chartTitle]="'Bills per Month'" [chartType]="'line'" [chartData]="chartBillsPerMonth" [legend]="true">
-    </app-chart>
-    <app-chart [chartTitle]="'Bills per Category'" [chartType]="'bar'" [chartData]="chartBillsPerCategory"
-        [legend]="true">
+    <app-chart [chartTitle]="'Spending Distribution by Category'" 
+               [chartType]="'doughnut'" 
+               [chartData]="chartDataExpenseDistribution"
+               [legend]="true">
     </app-chart>
     <app-chart [chartTitle]="'Monthly Expenses by Category (Stacked)'" 
                [chartType]="'bar'" 
@@ -67,15 +61,30 @@
                [chartData]="chartDataIncomeVsExpense"
                [legend]="true">
     </app-chart>
-    <app-chart [chartTitle]="'Spending Distribution by Category'" 
-               [chartType]="'doughnut'" 
-               [chartData]="chartDataExpenseDistribution"
-               [legend]="true">
-    </app-chart>
     <app-chart 
                 [chartTitle]="'Month-over-Month Expense Trend'" 
                 [chartType]="'bar'" 
                 [chartData]="chartDataMoMExpenses"
                 [legend]="true">
+    </app-chart>
+    <app-chart [chartTitle]="'Total per Category'"
+               [chartType]="'bar'"
+               [chartData]="chartDataTotalPerCategory"
+               [legend]="true">
+    </app-chart>
+    <app-chart [chartTitle]="'Total per Month'"
+               [chartType]="'line'"
+               [chartData]="chartDataTotalPerMonth"
+               [legend]="true">
+    </app-chart>
+    <app-chart [chartTitle]="'Bills per Month'"
+               [chartType]="'line'"
+               [chartData]="chartBillsPerMonth"
+               [legend]="true">
+    </app-chart>
+    <app-chart [chartTitle]="'Bills per Category'"
+               [chartType]="'bar'"
+               [chartData]="chartBillsPerCategory"
+               [legend]="true">
     </app-chart>
 </div>
