@@ -33,6 +33,7 @@ export interface Trip {
   name: string;
   destination?: string | null;
   description?: string | null;
+  coverImageUrl?: string | null;
   startDate?: string | null;
   endDate?: string | null;
   days: TripDay[];

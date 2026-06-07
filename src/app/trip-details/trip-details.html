@@ -6,6 +6,17 @@
       <p>Build the full itinerary with days, activities and attachments in one place.</p>
     </div>
 
+    <div class="hero-cover">
+      @if (form.get('coverImageUrl')?.value) {
+        <img [src]="form.get('coverImageUrl')?.value" alt="Trip cover" />
+      } @else {
+        <div class="cover-placeholder">
+          <span>Trip cover</span>
+          <small>Add a photo to personalize this trip</small>
+        </div>
+      }
+    </div>
+
     <div class="hero-actions">
       <button type="button" class="secondary" (click)="goBack()">Back</button>
       @if (isEditMode) {
@@ -29,6 +40,14 @@
       <label class="full">
         <span>Description</span>
         <textarea formControlName="description" rows="3" placeholder="Overall notes about the trip"></textarea>
+      </label>
+      <label class="full">
+        <span>Cover photo</span>
+        <input type="text" formControlName="coverImageUrl" placeholder="Paste an image URL or upload a photo below" />
+      </label>
+      <label class="full">
+        <span>Upload cover photo</span>
+        <input type="file" accept="image/*" (change)="onCoverImageSelected($event)" />
       </label>
       <label>
         <span>Start date</span>

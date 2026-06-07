@@ -1,0 +1,73 @@
+<div class="trip-dashboard">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Trip Manager</p>
+      <h1><fa-icon [icon]="faMapLocationDot"></fa-icon> Trips Dashboard</h1>
+      <p class="subtitle">A visual overview of your travel plans, with cover photos, key stats and quick access to each itinerary.</p>
+
+      <div class="hero-actions">
+        <button type="button" class="primary" (click)="goToAddTrip()"><fa-icon [icon]="faPlus"></fa-icon> New trip</button>
+        <button type="button" class="secondary" (click)="goToTripManager()">Manage trips</button>
+      </div>
+    </div>
+
+    @if (featuredTrip) {
+      <article class="featured-card" (click)="goToDetails(featuredTrip.id)">
+        <div class="featured-image">
+          <img [src]="getTripCover(featuredTrip)" [alt]="featuredTrip.name" />
+        </div>
+        <div class="featured-content">
+          <span>Featured trip</span>
+          <h2>{{ featuredTrip.name }}</h2>
+          <p>{{ getTripSubtitle(featuredTrip) || 'No destination yet' }}</p>
+        </div>
+      </article>
+    }
+  </section>
+
+  <section class="stats-grid">
+    <article class="stat-card">
+      <fa-icon [icon]="faCalendarDays"></fa-icon>
+      <strong>{{ totalTrips }}</strong>
+      <span>Total trips</span>
+    </article>
+    <article class="stat-card">
+      <fa-icon [icon]="faChartColumn"></fa-icon>
+      <strong>{{ totalDays }}</strong>
+      <span>Total days</span>
+    </article>
+    <article class="stat-card">
+      <fa-icon [icon]="faCircleNodes"></fa-icon>
+      <strong>{{ totalActivities }}</strong>
+      <span>Activities planned</span>
+    </article>
+    <article class="stat-card">
+      <fa-icon [icon]="faMapLocationDot"></fa-icon>
+      <strong>{{ upcomingTrips }}</strong>
+      <span>Upcoming trips</span>
+    </article>
+  </section>
+
+  <section class="trip-grid">
+    @for (trip of trips; track trip.id) {
+      <article class="trip-card" (click)="goToDetails(trip.id)">
+        <div class="trip-cover">
+          <img [src]="getTripCover(trip)" [alt]="trip.name" />
+          <div class="trip-cover-overlay"></div>
+        </div>
+        <div class="trip-body">
+          <div class="trip-head">
+            <h3>{{ trip.name }}</h3>
+            <span>{{ getTripDays(trip) }} days</span>
+          </div>
+          <p>{{ trip.destination || 'Destination not set' }}</p>
+          <small>{{ getTripSubtitle(trip) || 'No dates yet' }}</small>
+          <div class="trip-meta">
+            <span>{{ getTripActivities(trip) }} activities</span>
+            <span>{{ trip.attachments.length || 0 }} attachments</span>
+          </div>
+        </div>
+      </article>
+    }
+  </section>
+</div>

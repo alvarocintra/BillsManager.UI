@@ -16,8 +16,6 @@
 
       <nav class="topnav" [class.open]="sidebarOpen">
         <ul class="nav-list">
-          <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-
           <li class="submenu-wrap">
             <button type="button" class="submenu-toggle" (click)="toggleManage()">
               <span>Manage Bills</span>
@@ -28,12 +26,25 @@
             <ul class="submenu">
               <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
               <li><a routerLink="/bills" routerLinkActive="active">Bills</a></li>
+              <li><a routerLink="/dashboard" routerLinkActive="active">Bills Dashboard</a></li>
               <li><a routerLink="/imports" routerLinkActive="active">Import Statement</a></li>
             </ul>
             }
           </li>
 
-          <li><a routerLink="/trips" routerLinkActive="active">Trip Manager</a></li>
+          <li class="submenu-wrap">
+            <button type="button" class="submenu-toggle" (click)="toggleTrips()">
+              <span>Manage Trips</span>
+              <fa-icon [icon]="faChevronDown" [class.rotated]="tripsOpen" class="chevron"></fa-icon>
+            </button>
+
+            @if (tripsOpen) {
+            <ul class="submenu">
+              <li><a routerLink="/trips" routerLinkActive="active">Trip Manager</a></li>
+              <li><a routerLink="/trips/dashboard" routerLinkActive="active">Trips Dashboard</a></li>
+            </ul>
+            }
+          </li>
         </ul>
 
         @if (currentUser) {

@@ -43,6 +43,7 @@ export class TripDetails implements OnInit {
       name: ['', Validators.required],
       destination: [''],
       description: [''],
+      coverImageUrl: [''],
       startDate: [''],
       endDate: [''],
       attachments: this.fb.array([]),
@@ -110,6 +111,27 @@ export class TripDetails implements OnInit {
     this.fileInputs[key] = file;
   }
 
+  onCoverImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.toastr.error('Please choose an image file.', 'Error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      this.form.patchValue({ coverImageUrl: dataUrl });
+      this.cdr.detectChanges();
+    };
+    reader.readAsDataURL(file);
+  }
+
   async onSubmit() {
     if (this.form.invalid) {
       this.toastr.error('Form is invalid.', 'Error');
@@ -152,6 +174,7 @@ export class TripDetails implements OnInit {
             name: trip.name,
             destination: trip.destination || '',
             description: trip.description || '',
+            coverImageUrl: trip.coverImageUrl || '',
             startDate: trip.startDate ? trip.startDate.substring(0, 10) : '',
             endDate: trip.endDate ? trip.endDate.substring(0, 10) : ''
           });
@@ -347,6 +370,7 @@ export class TripDetails implements OnInit {
       name: '',
       destination: '',
       description: '',
+      coverImageUrl: '',
       startDate: '',
       endDate: ''
     });
@@ -371,6 +395,7 @@ export class TripDetails implements OnInit {
       name: raw.name || '',
       destination: raw.destination || null,
       description: raw.description || null,
+      coverImageUrl: raw.coverImageUrl || null,
       startDate: raw.startDate || null,
       endDate: raw.endDate || null,
       createdAt: this.trip?.createdAt || null,

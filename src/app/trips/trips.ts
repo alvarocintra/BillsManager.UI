@@ -69,4 +69,37 @@ export class Trips implements OnInit {
   tripActivitiesCount(trip: Trip) {
     return (trip.days || []).reduce((acc, day) => acc + (day.activities?.length || 0), 0);
   }
+
+  getTripCover(trip: Trip): string {
+    return trip.coverImageUrl || this.getFallbackCover(trip.name);
+  }
+
+  private getFallbackCover(name: string): string {
+    const palette = [
+      'linear-gradient(135deg, #2c3e50, #415d78)',
+      'linear-gradient(135deg, #c2410c, #f97316)',
+      'linear-gradient(135deg, #0f766e, #14b8a6)',
+      'linear-gradient(135deg, #7c3aed, #a855f7)'
+    ];
+
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const background = palette[Math.abs(hash) % palette.length];
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220">
+        <rect width="400" height="220" fill="#1f2937"/>
+        <rect width="400" height="220" fill="url(#g)" opacity="0.96"/>
+        <defs>
+          <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${background.includes('#2c3e50') ? '#2c3e50' : '#111827'}"/>
+            <stop offset="100%" stop-color="${background.includes('#2c3e50') ? '#415d78' : '#0f172a'}"/>
+          </linearGradient>
+        </defs>
+        <text x="24" y="126" font-size="34" fill="white" font-family="Arial, sans-serif" font-weight="700">${name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
+      </svg>
+    `)}`;
+  }
 }

@@ -19,6 +19,7 @@ import { AuthService } from './services/auth.service';
 })
 export class App implements OnChanges, OnInit {
   manageOpen = false;
+  tripsOpen = false;
   faChevronDown = faChevronDown;
   faBars = faBars;
   faTimes = faTimes;
@@ -78,6 +79,16 @@ export class App implements OnChanges, OnInit {
 
   toggleManage() {
     this.manageOpen = !this.manageOpen;
+    if (this.manageOpen) {
+      this.tripsOpen = false;
+    }
+  }
+
+  toggleTrips() {
+    this.tripsOpen = !this.tripsOpen;
+    if (this.tripsOpen) {
+      this.manageOpen = false;
+    }
   }
 
   logout() {

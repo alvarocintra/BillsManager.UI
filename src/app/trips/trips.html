@@ -11,6 +11,7 @@
     <table class="trips-table">
       <thead>
         <tr>
+          <th>Cover</th>
           <th>Name</th>
           <th>Destination</th>
           <th>Dates</th>
@@ -23,6 +24,11 @@
       <tbody>
         @for (trip of trips; track trip.id) {
           <tr>
+            <td>
+              <div class="cover-thumb">
+                <img [src]="getTripCover(trip)" [alt]="trip.name" />
+              </div>
+            </td>
             <td>{{ trip.name }}</td>
             <td>{{ trip.destination || '-' }}</td>
             <td>
