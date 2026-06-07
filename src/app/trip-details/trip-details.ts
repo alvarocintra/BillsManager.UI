@@ -140,6 +140,7 @@ export class TripDetails implements OnInit {
 
     const wasEditMode = this.isEditMode;
     const payload = this.toTripPayload();
+    console.log(this.toTripPayload);
     const request$ = this.trip?.id ? this.repo.updateTrip(payload) : this.repo.addTrip(payload);
 
     request$
@@ -334,13 +335,14 @@ export class TripDetails implements OnInit {
     });
   }
 
-  private createActivityGroup(activity?: Partial<{ id: string; order: number; title: string; time?: string | null; notes?: string | null }>) {
+  private createActivityGroup(activity?: Partial<{ id: string; order: number; title: string; time?: string | null; notes?: string | null, price?: number | null }>) {
     return this.fb.group({
       id: [activity?.id || ''],
       order: [activity?.order || 1],
       title: [activity?.title || '', Validators.required],
       time: [activity?.time || ''],
-      notes: [activity?.notes || '']
+      notes: [activity?.notes || ''],
+      price: [activity?.price || '']
     });
   }
 
@@ -413,7 +415,8 @@ export class TripDetails implements OnInit {
           order: Number(activity.order) || activityIndex + 1,
           title: activity.title || '',
           time: activity.time || null,
-          notes: activity.notes || null
+          notes: activity.notes || null,
+          price: Number(activity.price) || null
         }))
       }))
     };

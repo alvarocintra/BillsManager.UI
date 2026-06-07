@@ -16,6 +16,7 @@ export interface TripActivity {
   title: string;
   time?: string | null;
   notes?: string | null;
+  price?: number | null;
 }
 
 export interface TripDay {
