@@ -1,0 +1,47 @@
+<div class="trips-container">
+  <div class="header">
+    <div>
+      <h3><fa-icon [icon]="faMapLocationDot"></fa-icon> Trip Manager</h3>
+      <p>Plan trips, organize days and keep attachments in one place.</p>
+    </div>
+    <button class="add-btn" (click)="goToAddTrip()"><fa-icon [icon]="faPlus"></fa-icon></button>
+  </div>
+
+  <div class="table-container">
+    <table class="trips-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Destination</th>
+          <th>Dates</th>
+          <th>Days</th>
+          <th>Activities</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (trip of trips; track trip.id) {
+          <tr>
+            <td>{{ trip.name }}</td>
+            <td>{{ trip.destination || '-' }}</td>
+            <td>
+              @if (trip.startDate || trip.endDate) {
+                {{ trip.startDate | date: 'dd/MM/yyyy' }} - {{ trip.endDate | date: 'dd/MM/yyyy' }}
+              } @else {
+                -
+              }
+            </td>
+            <td>{{ tripDaysCount(trip) }}</td>
+            <td>{{ tripActivitiesCount(trip) }}</td>
+            <td>{{ trip.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <button class="details-btn" (click)="goToDetails(trip.id)"><fa-icon [icon]="faEye"></fa-icon></button>
+              <button class="delete-btn" (click)="deleteTrip(trip.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

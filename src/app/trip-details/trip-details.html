@@ -1,0 +1,250 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="trip-details-shell">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Trip Manager</p>
+      <h2><fa-icon [icon]="faMapLocationDot"></fa-icon> {{ isEditMode ? 'Edit Trip' : 'Create Trip' }}</h2>
+      <p>Build the full itinerary with days, activities and attachments in one place.</p>
+    </div>
+
+    <div class="hero-actions">
+      <button type="button" class="secondary" (click)="goBack()">Back</button>
+      @if (isEditMode) {
+        <button type="button" class="danger" (click)="deleteTrip()">Delete</button>
+      }
+      <button type="submit" class="primary" [disabled]="form.invalid">{{ isEditMode ? 'Save changes' : 'Create trip' }}</button>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h3>Trip details</h3>
+    <div class="grid">
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="e.g. Japan 2026" />
+      </label>
+      <label>
+        <span>Destination</span>
+        <input type="text" formControlName="destination" placeholder="e.g. Tokyo" />
+      </label>
+      <label class="full">
+        <span>Description</span>
+        <textarea formControlName="description" rows="3" placeholder="Overall notes about the trip"></textarea>
+      </label>
+      <label>
+        <span>Start date</span>
+        <input type="date" formControlName="startDate" />
+      </label>
+      <label>
+        <span>End date</span>
+        <input type="date" formControlName="endDate" />
+      </label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-header">
+      <h3>Trip attachments</h3>
+      <button type="button" class="ghost" (click)="addGlobalAttachment()"><fa-icon [icon]="faPlus"></fa-icon> Add attachment</button>
+    </div>
+
+    @if (trip?.attachments?.length) {
+      <div class="existing-attachments">
+        @for (attachment of trip?.attachments; track attachment.id) {
+          <div class="existing-attachment">
+            <div>
+              <strong>{{ attachment.title }}</strong>
+              <p>{{ attachment.description || 'No description' }}</p>
+            </div>
+            <div class="attachment-actions">
+              @if (attachment.kind === 'link' && attachment.url) {
+                <button type="button" class="ghost" (click)="openLink(attachment)"><fa-icon [icon]="faLink"></fa-icon> Open</button>
+              }
+              @if (attachment.kind === 'file') {
+                <button type="button" class="ghost" (click)="downloadAttachment(attachment)"><fa-icon [icon]="faDownload"></fa-icon> Download</button>
+              }
+              <button type="button" class="danger" (click)="removeAttachmentItem('trip', attachment.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="empty-state">No attachments yet.</p>
+    }
+
+    <div class="attachment-list" formArrayName="attachments">
+      @for (attachment of attachmentsArray.controls; track $index; let i = $index) {
+        <div class="attachment-card" [formGroupName]="i">
+          <div class="grid attachment-grid">
+            <label>
+              <span>Title</span>
+              <input type="text" formControlName="title" placeholder="Document title" />
+            </label>
+            <label>
+              <span>Description</span>
+              <input type="text" formControlName="description" placeholder="Optional note" />
+            </label>
+            <label>
+              <span>URL</span>
+              <input type="text" formControlName="url" placeholder="Link or leave blank to upload file" />
+            </label>
+            <label>
+              <span>File</span>
+              <input type="file" (change)="onFileSelected('trip', i, $event)" />
+            </label>
+          </div>
+
+          <div class="inline-actions">
+            <label class="checkbox">
+              <input type="checkbox" formControlName="isPhoto" />
+              Photo
+            </label>
+            <button type="button" class="secondary" (click)="saveAttachment('trip', i)">
+              <fa-icon [icon]="faCloudArrowUp"></fa-icon> Save attachment
+            </button>
+            <button type="button" class="ghost" (click)="removeAttachment(i)">Remove row</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-header">
+      <h3>Days</h3>
+      <button type="button" class="ghost" (click)="addDay()"><fa-icon [icon]="faPlus"></fa-icon> Add day</button>
+    </div>
+
+    <div class="days-list" formArrayName="days">
+      @for (day of daysArray.controls; track $index; let dayIndex = $index) {
+        <div class="day-card" [formGroupName]="dayIndex">
+          <div class="day-header">
+            <div>
+              <strong>Day {{ dayIndex + 1 }}</strong>
+              <span>Structure the itinerary day by day</span>
+            </div>
+            <button type="button" class="danger" (click)="removeDay(dayIndex)"><fa-icon [icon]="faTrash"></fa-icon></button>
+          </div>
+
+          <div class="grid">
+            <label>
+              <span>Day title</span>
+              <input type="text" formControlName="title" placeholder="Morning in Kyoto" />
+            </label>
+            <label>
+              <span>Day number</span>
+              <input type="number" formControlName="dayNumber" />
+            </label>
+            <label>
+              <span>Date</span>
+              <input type="date" formControlName="date" />
+            </label>
+            <label class="full">
+              <span>Notes</span>
+              <textarea formControlName="notes" rows="2" placeholder="Optional notes for this day"></textarea>
+            </label>
+          </div>
+
+          <div class="mini-section">
+            <div class="section-header">
+              <h4>Activities</h4>
+              <button type="button" class="ghost" (click)="addActivity(dayIndex)"><fa-icon [icon]="faPlus"></fa-icon> Add activity</button>
+            </div>
+
+            <div class="activities-list" formArrayName="activities">
+              @for (activity of getDayActivities(dayIndex).controls; track $index; let activityIndex = $index) {
+                <div class="activity-row" [formGroupName]="activityIndex">
+                  <label>
+                    <span>Title</span>
+                    <input type="text" formControlName="title" placeholder="Museum visit" />
+                  </label>
+                  <label>
+                    <span>Time</span>
+                    <input type="text" formControlName="time" placeholder="09:30" />
+                  </label>
+                  <label>
+                    <span>Notes</span>
+                    <input type="text" formControlName="notes" placeholder="Optional note" />
+                  </label>
+                  <label>
+                    <span>Order</span>
+                    <input type="number" formControlName="order" />
+                  </label>
+                  <button type="button" class="danger activity-remove" (click)="removeActivity(dayIndex, activityIndex)">
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="mini-section">
+            <div class="section-header">
+              <h4>Day attachments</h4>
+              <button type="button" class="ghost" (click)="addDayAttachment(dayIndex)"><fa-icon [icon]="faPlus"></fa-icon> Add attachment</button>
+            </div>
+
+            @if (trip?.days?.[dayIndex]?.attachments?.length) {
+              <div class="existing-attachments">
+                @for (attachment of trip?.days?.[dayIndex]?.attachments; track attachment.id) {
+                  <div class="existing-attachment">
+                    <div>
+                      <strong>{{ attachment.title }}</strong>
+                      <p>{{ attachment.description || 'No description' }}</p>
+                    </div>
+                    <div class="attachment-actions">
+                      @if (attachment.kind === 'link' && attachment.url) {
+                        <button type="button" class="ghost" (click)="openLink(attachment)"><fa-icon [icon]="faLink"></fa-icon> Open</button>
+                      }
+                      @if (attachment.kind === 'file') {
+                        <button type="button" class="ghost" (click)="downloadAttachment(attachment)"><fa-icon [icon]="faDownload"></fa-icon> Download</button>
+                      }
+                      <button type="button" class="danger" (click)="removeAttachmentItem(dayIndex, attachment.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-state">No attachments for this day.</p>
+            }
+
+            <div class="attachment-list" formArrayName="attachments">
+              @for (attachment of getDayAttachments(dayIndex).controls; track $index; let attachmentIndex = $index) {
+                <div class="attachment-card compact" [formGroupName]="attachmentIndex">
+                  <div class="grid attachment-grid">
+                    <label>
+                      <span>Title</span>
+                      <input type="text" formControlName="title" />
+                    </label>
+                    <label>
+                      <span>Description</span>
+                      <input type="text" formControlName="description" />
+                    </label>
+                    <label>
+                      <span>URL</span>
+                      <input type="text" formControlName="url" placeholder="Link or leave blank to upload file" />
+                    </label>
+                    <label>
+                      <span>File</span>
+                      <input type="file" (change)="onFileSelected(dayIndex, attachmentIndex, $event)" />
+                    </label>
+                  </div>
+
+                  <div class="inline-actions">
+                    <label class="checkbox">
+                      <input type="checkbox" formControlName="isPhoto" />
+                      Photo
+                    </label>
+                    <button type="button" class="secondary" (click)="saveAttachment(dayIndex, attachmentIndex)">
+                      <fa-icon [icon]="faCloudArrowUp"></fa-icon> Save attachment
+                    </button>
+                    <button type="button" class="ghost" (click)="removeAttachment(attachmentIndex)">Remove row</button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</form>
