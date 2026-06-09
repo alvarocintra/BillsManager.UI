@@ -48,43 +48,60 @@
     <app-chart [chartTitle]="'Spending Distribution by Category'" 
                [chartType]="'doughnut'" 
                [chartData]="chartDataExpenseDistribution"
-               [legend]="true">
+               [showLegend]="true">
     </app-chart>
     <app-chart [chartTitle]="'Monthly Expenses by Category (Stacked)'" 
                [chartType]="'bar'" 
                [chartData]="chartDataStackedByMonth"
                [chartOptions]="stackedBarOptions"
-               [legend]="false">
+               [showLegend]="true"
+               [chartOptions]="{ scales: { x: { stacked: true } } }"
+               [showDataLabels]="false" 
+               [decimalPlaces]="2">
     </app-chart>
     <app-chart [chartTitle]="'Monthly Cash Flow (Income vs Expense)'" 
                [chartType]="'bar'" 
                [chartData]="chartDataIncomeVsExpense"
-               [legend]="true">
+               [showLegend]="true"
+               [chartOptions]="{ scales: { x: { stacked: false }, y: { beginAtZero: true } } }"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
     </app-chart>
     <app-chart 
                 [chartTitle]="'Month-over-Month Expense Trend'" 
                 [chartType]="'bar'" 
                 [chartData]="chartDataMoMExpenses"
-                [legend]="true">
+                [showLegend]="true"
+                [chartOptions]="{ scales: { x: { stacked: false }, y: { beginAtZero: true } } }"
+                [showDataLabels]="false"
+                [decimalPlaces]="2">
     </app-chart>
     <app-chart [chartTitle]="'Total per Category'"
                [chartType]="'bar'"
                [chartData]="chartDataTotalPerCategory"
-               [legend]="true">
+               [showLegend]="false"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
     </app-chart>
     <app-chart [chartTitle]="'Total per Month'"
                [chartType]="'line'"
                [chartData]="chartDataTotalPerMonth"
-               [legend]="true">
+               [showLegend]="false"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
     </app-chart>
     <app-chart [chartTitle]="'Bills per Month'"
                [chartType]="'line'"
                [chartData]="chartBillsPerMonth"
-               [legend]="true">
+               [showLegend]="false"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
     </app-chart>
     <app-chart [chartTitle]="'Bills per Category'"
                [chartType]="'bar'"
                [chartData]="chartBillsPerCategory"
-               [legend]="true">
+               [showLegend]="false"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
     </app-chart>
 </div>

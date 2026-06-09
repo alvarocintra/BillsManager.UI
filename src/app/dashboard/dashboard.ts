@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { ChartComponent } from "../shared/chart.component/chart.component";
 import { BillsRepository } from '../services/bills.repository';
 import { finalize } from 'rxjs';
@@ -7,7 +6,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown, faArrowUp, faBullseye, faChartBar, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
 import { BillsFilter } from '../models/bills-filter.model';
-import { ChartConfiguration, ChartData } from 'chart.js';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -81,12 +79,12 @@ export class Dashboard implements OnInit {
     ]
   };
 
-  chartDataStackedByMonth: ChartData = {
+  chartDataStackedByMonth: any = {
     labels: [],
     datasets: []
   };
 
-  stackedBarOptions: ChartConfiguration['options'] = {
+  stackedBarOptions: any = {
     responsive: true,
     maintainAspectRatio: true,
     scales: {
