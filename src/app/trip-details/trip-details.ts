@@ -150,8 +150,8 @@ export class TripDetails implements OnInit {
           this.trip = savedTrip;
           this.isEditMode = true;
           this.form.patchValue({
-            startDate: savedTrip.startDate ? savedTrip.startDate.substring(0, 10) : '',
-            endDate: savedTrip.endDate ? savedTrip.endDate.substring(0, 10) : ''
+            startDate: savedTrip.startDate,
+            endDate: savedTrip.endDate
           });
           this.toastr.success('Trip saved successfully!', 'Success');
           if (!wasEditMode) {
@@ -176,8 +176,8 @@ export class TripDetails implements OnInit {
             destination: trip.destination || '',
             description: trip.description || '',
             coverImageUrl: trip.coverImageUrl || '',
-            startDate: trip.startDate ? trip.startDate.substring(0, 10) : '',
-            endDate: trip.endDate ? trip.endDate.substring(0, 10) : ''
+            startDate: trip.startDate,
+            endDate: trip.endDate
           });
 
           this.attachmentsArray.clear();
@@ -351,7 +351,7 @@ export class TripDetails implements OnInit {
       id: [day?.id || ''],
       dayNumber: [day?.dayNumber || this.daysArray.length + 1, Validators.required],
       title: [day?.title || '', Validators.required],
-      date: [day?.date ? day.date.substring(0, 10) : ''],
+      date: [day?.date, Validators.required],
       notes: [day?.notes || ''],
       activities: this.fb.array([]),
       attachments: this.fb.array([])

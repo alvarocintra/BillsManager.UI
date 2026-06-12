@@ -60,7 +60,10 @@
             <h3>{{ trip.name }}</h3>
             <span>{{ getTripDays(trip) }} days</span>
           </div>
-          <p>{{ trip.destination || 'Destination not set' }}</p>
+          <div class="trip-head">
+            <p>{{ trip.destination || 'Destination not set' }}</p>
+            <span class="planned-text">{{ getTripPlannedDays(trip) }} planned days</span>
+          </div>
           <small>{{ getTripSubtitle(trip) || 'No dates yet' }}</small>
           <div class="trip-meta">
             <span>{{ getTripActivities(trip) }} activities</span>

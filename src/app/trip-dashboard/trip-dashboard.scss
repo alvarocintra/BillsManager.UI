@@ -200,9 +200,13 @@
   }
 
   span {
-    color: #c2410c;
+    color: #08538c;
     font-weight: 800;
     white-space: nowrap;
+    &.planned-text {
+      color: #6b7280;
+      font-weight: 500;
+    }
   }
 }
 

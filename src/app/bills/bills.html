@@ -45,17 +45,19 @@
           <th>
             <input type="text" [(ngModel)]="filters.title" (ngModelChange)="applyFilters()" placeholder="Search title" />
           </th>
-          <th class="filter-stack">
-            <input
-              type="number"
-              placeholder="Min"
-              [(ngModel)]="filters.fromAmount"
-              (ngModelChange)="applyFilters()" />
-            <input
-              type="number"
-              placeholder="Max"
-              [(ngModel)]="filters.toAmount"
-              (ngModelChange)="applyFilters()" />
+          <th>
+            <div class="filter-stack">
+              <input
+                type="number"
+                placeholder="Min"
+                [(ngModel)]="filters.fromAmount"
+                (ngModelChange)="applyFilters()" />
+              <input
+                type="number"
+                placeholder="Max"
+                [(ngModel)]="filters.toAmount"
+                (ngModelChange)="applyFilters()" />
+            </div>
           </th>
           <th>
             <select [(ngModel)]="filters.type" (change)="applyFilters()">
@@ -79,19 +81,23 @@
               }
             </select>
           </th>
-          <th class="filter-stack">
-            <input
-              type="date"
-              [ngModel]="filters.fromDueDate | date:'yyyy-MM-dd'"
-              (ngModelChange)="onDateChange($event, 'fromDueDate')" />
-            <input
-              type="date"
-              [ngModel]="filters.toDueDate | date:'yyyy-MM-dd'"
-              (ngModelChange)="onDateChange($event, 'toDueDate')" />
+          <th>
+            <div class="filter-stack">
+              <input
+                type="date"
+                [ngModel]="filters.fromDueDate | date:'yyyy-MM-dd'"
+                (ngModelChange)="onDateChange($event, 'fromDueDate')" />
+              <input
+                type="date"
+                [ngModel]="filters.toDueDate | date:'yyyy-MM-dd'"
+                (ngModelChange)="onDateChange($event, 'toDueDate')" />
+            </div>
           </th>
-          <th class="filter-stack">
-            <input type="date" [(ngModel)]="filters.fromCreatedAt" (change)="applyFilters()" />
-            <input type="date" [(ngModel)]="filters.toCreatedAt" (change)="applyFilters()" />
+          <th>
+            <div class="filter-stack">
+              <input type="date" [(ngModel)]="filters.fromCreatedAt" (change)="applyFilters()" />
+              <input type="date" [(ngModel)]="filters.toCreatedAt" (change)="applyFilters()" />
+            </div>
           </th>
         </tr>
       </thead>

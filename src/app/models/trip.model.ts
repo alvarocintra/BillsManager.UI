@@ -23,7 +23,7 @@ export interface TripDay {
   id: string;
   dayNumber: number;
   title: string;
-  date?: string | null;
+  date?: Date | null;
   notes?: string | null;
   activities: TripActivity[];
   attachments: TripAttachment[];
@@ -35,10 +35,10 @@ export interface Trip {
   destination?: string | null;
   description?: string | null;
   coverImageUrl?: string | null;
-  startDate?: string | null;
-  endDate?: string | null;
+  startDate?: Date | null;
+  endDate?: Date | null;
   days: TripDay[];
   attachments: TripAttachment[];
-  createdAt?: string | null;
-  updatedAt?: string | null;
+  createdAt?: Date | null;
+  updatedAt?: Date | null;
 }

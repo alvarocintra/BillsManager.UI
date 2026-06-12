@@ -76,7 +76,13 @@ export class TripDashboard implements OnInit {
   }
 
   getTripDays(trip: Trip): number {
-    return trip.days?.length || 0;
+    return trip.startDate && trip.endDate
+      ? Math.ceil((new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
+      : trip.days.length;
+  }
+
+  getTripPlannedDays(trip: Trip): number {
+    return trip.days.length;
   }
 
   getTripActivities(trip: Trip): number {
@@ -85,7 +91,17 @@ export class TripDashboard implements OnInit {
 
   private setupStats(trips: Trip[]) {
     this.totalTrips = trips.length;
-    this.totalDays = trips.reduce((sum, trip) => sum + this.getTripDays(trip), 0);
+    // this.totalDays = trips.reduce((sum, trip) => sum + this.getTripDays(trip), 0);
+    // the total days should be the sum of the number of days of each trip, from start to end dates
+    this.totalDays = trips.reduce((sum, trip) => {
+      if (trip.startDate && trip.endDate) {
+        const start = new Date(trip.startDate);
+        const end = new Date(trip.endDate);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        return sum + days;
+      }
+      return sum;
+    }, 0);
     this.totalActivities = trips.reduce((sum, trip) => sum + this.getTripActivities(trip), 0);
     this.upcomingTrips = trips.filter(trip => {
       if (!trip.startDate) return false;
