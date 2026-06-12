@@ -63,6 +63,11 @@
   th {
     font-weight: bold;
   }
+
+  th:last-child {
+    justify-content: flex-end;
+  }
+
   td:last-child {
     display: inline-flex; 
     width: -webkit-fill-available;
