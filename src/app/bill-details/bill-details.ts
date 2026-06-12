@@ -5,12 +5,12 @@ import { finalize } from 'rxjs';
 import { BillsRepository } from '../services/bills.repository';
 import { CategoriesRepository } from '../services/categories.repository';
 import { CommonModule } from '@angular/common';
-import { title } from 'process';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faMoneyBill, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
 import { ConfirmDialogComponent } from '../shared/confirmation-modal.component/confirmation-modal.component';
 import { ConfirmDialogService } from '../services/confirm-dialog.service';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -34,6 +34,7 @@ export class BillDetails {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private repo: BillsRepository,
@@ -179,11 +180,12 @@ export class BillDetails {
   proceedDeleteBill(billId: string) {
     this.repo.deleteBill(billId)
       .pipe(finalize(() => {
-        window.history.back();
+        this.cdr.detectChanges();
       }))
       .subscribe({
         next: () => {
           this.toastr.success('Bill deleted successfully!', 'Success');
+          this.goBack();
         },
         error: (err) => {
           this.toastr.error('Error deleting bill.', 'Error');
@@ -192,6 +194,12 @@ export class BillDetails {
   }
 
   goBack() {
-    window.history.back();
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
+    this.router.navigate(['/bills']);
   }
 }

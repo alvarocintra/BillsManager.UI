@@ -19,8 +19,10 @@
             <td>{{ category.name }}</td>
             <td>{{ category.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
             <td>
-              <button class="details-btn" (click)="goToDetails(category.id)"><fa-icon [icon]="faEye"></fa-icon></button>
-              <button class="delete-btn" (click)="deleteCategory(category.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+              <div class="actions-stack">
+                <button class="details-btn" (click)="goToDetails(category.id)"><fa-icon [icon]="faEye"></fa-icon></button>
+                <button class="delete-btn" (click)="deleteCategory(category.id)"><fa-icon [icon]="faTrash"></fa-icon></button>
+              </div>
             </td>
           </tr>
         }

@@ -7,6 +7,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faTrash, faEye, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { Category } from '../models/category.model';
 import { ToastrService } from 'ngx-toastr';
+import { ConfirmDialogService } from '../services/confirm-dialog.service';
 
 @Component({
   selector: 'app-categories',
@@ -23,6 +24,7 @@ export class Categories implements OnInit {
 
   constructor(
     private repo: CategoriesRepository,
+    private confirmDialog: ConfirmDialogService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private toastr: ToastrService) {
@@ -53,7 +55,7 @@ export class Categories implements OnInit {
     this.router.navigate(['/categories/add']);
   }
 
-  deleteCategory(categoryId: string) {
+  proceedDeleteCategory(categoryId: string) {
     this.repo.deleteCategory(categoryId)
       .pipe(finalize(() => {
         this.loadCategories();
@@ -61,11 +63,19 @@ export class Categories implements OnInit {
       .subscribe({
         next: () => {
           this.toastr.success('Category deleted successfully!', 'Success');
+          this.loadCategories();
         },
         error: (err) => {
           this.toastr.error('Error deleting category.', 'Error');
         }
       });
+  }
+
+  async deleteCategory(id: string) {
+    const confirmed = await this.confirmDialog.confirm('Confirm Deletion', 'Are you sure you want to delete this category?');
+    if (confirmed) {
+      this.proceedDeleteCategory(id);
+    }
   }
 
   goToDetails(categoryId: string) {

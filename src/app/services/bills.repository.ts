@@ -25,6 +25,8 @@ export class BillsRepository {
     toDueDate: Date | null = null,
     fromAmount: number | null = null,
     toAmount: number | null = null,
+    fromCreatedAt: Date | null = null,
+    toCreatedAt: Date | null = null,
     sortBy: string | null = 'createdAt',
     sortOrder: string | null = 'desc'): Observable<PagedResult<Bill>> {
       const token = this.authService.getToken();
@@ -44,6 +46,8 @@ export class BillsRepository {
         toDueDate: toDueDate ? toDueDate.toISOString() : '',
         fromAmount: fromAmount !== null ? String(fromAmount) : '',
         toAmount: toAmount !== null ? String(toAmount) : '',
+        fromCreatedAt: fromCreatedAt ? fromCreatedAt.toISOString() : '',
+        toCreatedAt: toCreatedAt ? toCreatedAt.toISOString() : '',
         sortBy: sortBy || 'createdAt',
         sortOrder: sortOrder || 'desc'
       }

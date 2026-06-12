@@ -2,16 +2,16 @@
   <div class="login-card">
     <div class="login-header">
       <img src="logo_3.jpg" alt="Duofy Logo" width="128" height="128" />
-      <h1>{{ isLoginMode ? 'Login' : 'Register' }}</h1>
+      <!-- <h1>{{ isLoginMode ? 'Login' : 'Register' }}</h1>
       <p class="toggle-text">
         {{ isLoginMode ? "Don't have an account?" : 'Already have an account?' }}
         <button type="button" class="toggle-button" (click)="toggleMode()">
           {{ isLoginMode ? 'Register' : 'Login' }}
         </button>
-      </p>
+      </p> -->
     </div>
 
-    @if (isLoginMode) {
+    <!-- @if (isLoginMode) { -->
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="form-group">
         <label for="loginEmail">Email Address</label>
@@ -80,7 +80,7 @@
         }
       </button>
     </form>
-    } @else {
+    <!-- } @else {
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       <div class="form-row">
         <div class="form-group form-col-half">
@@ -208,6 +208,6 @@
         }
       </button>
     </form>
-    }
+    } -->
   </div>
 </div>

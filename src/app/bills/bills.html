@@ -22,9 +22,9 @@
           <th>
             Type
           </th>
-          <th>
+          <!-- <th>
             Paid
-          </th>
+          </th> -->
           <th>
             Category
           </th>
@@ -66,13 +66,13 @@
               <option value="income">Income</option>
             </select>
           </th>
-          <th>
-            <select [(ngModel)]="filters.paid" (change)="applyFilters()">
-              <option value="">All</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </th>
+            <!-- <th>
+              <select [(ngModel)]="filters.paid" (change)="applyFilters()">
+                <option value="">All</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </th> -->
           <th>
             <select [(ngModel)]="filters.category" (change)="applyFilters()">
               <option value="">All</option>
@@ -95,8 +95,14 @@
           </th>
           <th>
             <div class="filter-stack">
-              <input type="date" [(ngModel)]="filters.fromCreatedAt" (change)="applyFilters()" />
-              <input type="date" [(ngModel)]="filters.toCreatedAt" (change)="applyFilters()" />
+              <input
+                type="date"
+                [ngModel]="filters.fromCreatedAt | date:'yyyy-MM-dd'"
+                (ngModelChange)="onDateChange($event, 'fromCreatedAt')" />
+              <input
+                type="date"
+                [ngModel]="filters.toCreatedAt | date:'yyyy-MM-dd'"
+                (ngModelChange)="onDateChange($event, 'toCreatedAt')" />
             </div>
           </th>
         </tr>
@@ -109,7 +115,7 @@
             <td>{{ bill.title }}</td>
             <td>{{ bill.amount | currency: 'GBP' }}</td>
             <td>{{ bill.type }}</td>
-            <td>{{ bill.paid ? 'Yes' : 'No' }}</td>
+            <!-- <td>{{ bill.paid ? 'Yes' : 'No' }}</td> -->
             <td>{{ bill.category?.name || 'Uncategorized' }}</td>
             <td>{{ bill.dueDate | date: 'dd/MM/yyyy' }}</td>
             <td>{{ bill.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>

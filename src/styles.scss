@@ -1,12 +1,24 @@
 @import '../node_modules/ngx-toastr/toastr.css';
 
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 200 1000; // range de pesos suportados
+  src: url('../public/Nunito-VariableFont_wght.ttf') format('truetype-variations');
+  font-display: swap; // ou optional, fallback
+}
+
 html, body {
   width: 100%;
   min-height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Nunito', sans-serif;
   overflow-x: hidden;
+}
+
+button {
+  font-family: 'Nunito', sans-serif;
 }
 
 app-root,

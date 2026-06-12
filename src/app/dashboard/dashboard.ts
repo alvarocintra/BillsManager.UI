@@ -173,6 +173,8 @@ export class Dashboard implements OnInit {
       this.filters.toDueDate,
       this.filters.fromAmount,
       this.filters.toAmount,
+      this.filters.fromCreatedAt,
+      this.filters.toCreatedAt,
       this.sortColumn,
       this.sortDirection
     )

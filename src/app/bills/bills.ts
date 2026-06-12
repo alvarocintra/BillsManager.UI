@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { BillsRepository } from '../services/bills.repository';
-import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faTrash, faEye, faMoneyBills, faChevronRight, faChevronLeft, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
@@ -11,6 +11,7 @@ import { Category } from '../models/category.model';
 import { CategoriesRepository } from '../services/categories.repository';
 import { BillsFilter } from '../models/bills-filter.model';
 import { ToastrService } from 'ngx-toastr';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-bills',
@@ -55,13 +56,87 @@ export class Bills implements OnInit {
     private repo: BillsRepository,
     private categoriesRepo: CategoriesRepository,
     private router: Router,
+    private route: ActivatedRoute,
+    private destroyRef: DestroyRef,
     private cdr: ChangeDetectorRef,
     private toastr: ToastrService) {
   }
 
   ngOnInit(): void {
-    this.loadBills();
     this.loadCategories();
+
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.syncStateFromQueryParams(params);
+        this.loadBills();
+      });
+  }
+
+  private syncStateFromQueryParams(params: ParamMap): void {
+    this.currentPage = this.parseNumberParam(params.get('page'), 1) ?? 1;
+    this.pageSize = this.parseNumberParam(params.get('pageSize'), 10) ?? 10;
+    this.sortColumn = params.get('sortColumn') || 'dueDate';
+    this.sortDirection = params.get('sortDirection') === 'asc' ? 'asc' : 'desc';
+
+    this.filters.title = params.get('title') || '';
+    this.filters.type = params.get('type') || '';
+    this.filters.paid = params.get('paid') || '';
+    this.filters.category = params.get('category') || '';
+    this.filters.fromDueDate = this.parseDateParam(params.get('fromDueDate'));
+    this.filters.toDueDate = this.parseDateParam(params.get('toDueDate'));
+    this.filters.fromCreatedAt = this.parseDateParam(params.get('fromCreatedAt'));
+    this.filters.toCreatedAt = this.parseDateParam(params.get('toCreatedAt'));
+    this.filters.fromAmount = this.parseNumberParam(params.get('fromAmount'));
+    this.filters.toAmount = this.parseNumberParam(params.get('toAmount'));
+  }
+
+  private parseNumberParam(value: string | null, fallback?: number): number | undefined {
+    if (value === null || value === '') {
+      return fallback;
+    }
+
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  private parseDateParam(value: string | null): Date | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  }
+
+  private buildQueryParams(): Record<string, string | number> {
+    const queryParams: Record<string, string | number> = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      sortColumn: this.sortColumn,
+      sortDirection: this.sortDirection
+    };
+
+    if (this.filters.title) queryParams['title'] = this.filters.title;
+    if (this.filters.type) queryParams['type'] = this.filters.type;
+    if (this.filters.paid) queryParams['paid'] = this.filters.paid;
+    if (this.filters.category) queryParams['category'] = this.filters.category;
+    if (this.filters.fromDueDate) queryParams['fromDueDate'] = this.filters.fromDueDate.toISOString();
+    if (this.filters.toDueDate) queryParams['toDueDate'] = this.filters.toDueDate.toISOString();
+    if (this.filters.fromCreatedAt) queryParams['fromCreatedAt'] = this.filters.fromCreatedAt.toISOString();
+    if (this.filters.toCreatedAt) queryParams['toCreatedAt'] = this.filters.toCreatedAt.toISOString();
+    if (this.filters.fromAmount !== undefined && this.filters.fromAmount !== null) queryParams['fromAmount'] = this.filters.fromAmount;
+    if (this.filters.toAmount !== undefined && this.filters.toAmount !== null) queryParams['toAmount'] = this.filters.toAmount;
+
+    return queryParams;
+  }
+
+  private updateQueryParams(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: this.buildQueryParams(),
+      replaceUrl: true
+    });
   }
 
   onDateChange(value: string, key: keyof BillsFilter) {
@@ -77,7 +152,7 @@ export class Bills implements OnInit {
 
   applyFilters() {
     this.currentPage = 1;
-    this.loadBills();
+    this.updateQueryParams();
   }
 
   sortByColumn(column: string): void {
@@ -87,7 +162,7 @@ export class Bills implements OnInit {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
-    this.loadBills();
+    this.updateQueryParams();
   }
 
   loadBills() {
@@ -102,6 +177,8 @@ export class Bills implements OnInit {
       this.filters.toDueDate,
       this.filters.fromAmount,
       this.filters.toAmount,
+      this.filters.fromCreatedAt,
+      this.filters.toCreatedAt,
       this.sortColumn,
       this.sortDirection
     )
@@ -137,44 +214,56 @@ export class Bills implements OnInit {
 
   onPageChange(page: number) {
     this.currentPage = page;
-    this.loadBills();
+    this.updateQueryParams();
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.loadBills();
+      this.updateQueryParams();
     }
   }
 
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.loadBills();
+      this.updateQueryParams();
     }
   }
 
   goToAddBill() {
-    this.router.navigate(['/bills/add']);
+    this.router.navigate(['/bills/add'], {
+      queryParams: {
+        returnUrl: this.router.url
+      }
+    });
   }
 
   getBillDetailsUrl(billId: string) {
-    return `/bills/${billId}`;
+    return this.router.serializeUrl(this.router.createUrlTree(['/bills', billId], {
+      queryParams: {
+        returnUrl: this.router.url
+      }
+    }));
   }
 
   goToDetails(billId: string, event?: MouseEvent) {
+    const detailsTree = this.router.createUrlTree(['/bills', billId], {
+      queryParams: {
+        returnUrl: this.router.url
+      }
+    });
+
     if (event?.ctrlKey || event?.button === 1) {
-      // Abrir em nova aba se Ctrl+Click ou clique do meio do mouse
-      const url = this.router.createUrlTree(['/bills', billId]).toString();
+      const url = this.router.serializeUrl(detailsTree);
       window.open(url, '_blank');
     } else {
-      // Navegação normal na mesma aba
-      this.router.navigate(['/bills', billId]);
+      this.router.navigateByUrl(detailsTree);
     }
   }
 
   onPageSizeChange() {
     this.currentPage = 1;
-    this.loadBills();
+    this.updateQueryParams();
   }
 }
