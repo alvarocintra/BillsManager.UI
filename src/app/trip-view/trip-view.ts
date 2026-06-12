@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowLeft, faCalendarDays, faDownload, faLink, faMapLocationDot, faPenToSquare, faPaperclip, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCalendarDays, faDownload, faLink, faMapLocationDot, faPenToSquare, faPaperclip, faSpinner, faChartColumn } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TripsRepository } from '../services/trips.repository';
@@ -28,6 +28,7 @@ export class TripView implements OnInit {
   faPenToSquare = faPenToSquare;
   faPaperclip = faPaperclip;
   faSpinner = faSpinner;
+  faChartColumn = faChartColumn;
 
   constructor(
     private route: ActivatedRoute,

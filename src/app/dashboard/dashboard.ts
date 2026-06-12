@@ -3,7 +3,7 @@ import { ChartComponent } from "../shared/chart.component/chart.component";
 import { BillsRepository } from '../services/bills.repository';
 import { finalize } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowDown, faArrowUp, faBullseye, faChartBar, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faBullseye, faChartBar, faChartColumn, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
 import { BillsFilter } from '../models/bills-filter.model';
 import { ToastrService } from 'ngx-toastr';
@@ -46,6 +46,7 @@ export class Dashboard implements OnInit {
   faArrowUp = faArrowUp;
   faArrowDown = faArrowDown;
   faBullseye = faBullseye;
+  faChartColumn = faChartColumn;
 
   chartDataTotalPerCategory: any = {
     labels: [],
