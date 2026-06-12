@@ -50,7 +50,7 @@ export class Trips implements OnInit {
   }
 
   goToDetails(tripId: string) {
-    this.router.navigate(['/trips', tripId]);
+    this.router.navigate(['/trips/view', tripId]);
   }
 
   deleteTrip(tripId: string) {

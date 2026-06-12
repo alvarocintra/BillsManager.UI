@@ -62,8 +62,8 @@ export class TripDashboard implements OnInit {
     this.router.navigate(['/trips/add']);
   }
 
-  goToDetails(tripId: string) {
-    this.router.navigate(['/trips', tripId]);
+  goToViewTrip(tripId: string) {
+    this.router.navigate(['/trips/view', tripId]);
   }
 
   getTripCover(trip: Trip): string {

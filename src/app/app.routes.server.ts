@@ -9,6 +9,9 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'bills', renderMode: RenderMode.Server },
   { path: 'bills/add', renderMode: RenderMode.Server },
   { path: 'bills/:id', renderMode: RenderMode.Server },
+  { path: 'trips', renderMode: RenderMode.Server },
+  { path: 'trips/add', renderMode: RenderMode.Server },
+  { path: 'trips/view/:id', renderMode: RenderMode.Server },
   { path: 'imports', renderMode: RenderMode.Server },
   { path: '**', renderMode: RenderMode.Server }
 ];

@@ -13,6 +13,7 @@ export const routes: Routes = [
     { path: 'bills/:id', loadComponent: () => import('./bill-details/bill-details').then(m => m.BillDetails), canActivate: [authGuard] },
     { path: 'trips', loadComponent: () => import('./trips/trips').then(m => m.Trips), canActivate: [authGuard] },
     { path: 'trips/add', loadComponent: () => import('./trip-details/trip-details').then(m => m.TripDetails), canActivate: [authGuard] },
+    { path: 'trips/view/:id', loadComponent: () => import('./trip-view/trip-view').then(m => m.TripView), canActivate: [authGuard] },
     { path: 'trips/dashboard', loadComponent: () => import('./trip-dashboard/trip-dashboard').then(m => m.TripDashboard), canActivate: [authGuard] },
     { path: 'trips/:id', loadComponent: () => import('./trip-details/trip-details').then(m => m.TripDetails), canActivate: [authGuard] },
     { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },

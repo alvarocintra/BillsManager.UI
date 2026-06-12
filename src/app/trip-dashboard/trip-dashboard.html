@@ -12,7 +12,7 @@
     </div>
 
     @if (featuredTrip) {
-      <article class="featured-card" (click)="goToDetails(featuredTrip.id)">
+      <article class="featured-card" (click)="goToViewTrip(featuredTrip.id)">
         <div class="featured-image">
           <img [src]="getTripCover(featuredTrip)" [alt]="featuredTrip.name" />
         </div>
@@ -50,7 +50,7 @@
 
   <section class="trip-grid">
     @for (trip of trips; track trip.id) {
-      <article class="trip-card" (click)="goToDetails(trip.id)">
+      <article class="trip-card" (click)="goToViewTrip(trip.id)">
         <div class="trip-cover">
           <img [src]="getTripCover(trip)" [alt]="trip.name" />
           <div class="trip-cover-overlay"></div>

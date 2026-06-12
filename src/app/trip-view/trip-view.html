@@ -1,0 +1,187 @@
+<div class="trip-view-shell">
+  @if (isLoading) {
+    <section class="panel loading-state">
+      <fa-icon [icon]="faSpinner" class="spin"></fa-icon>
+      <span>Loading trip...</span>
+    </section>
+  } @else if (trip) {
+    @let currentTrip = trip!;
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Trip overview</p>
+        <h2><fa-icon [icon]="faMapLocationDot"></fa-icon> {{ currentTrip.name }}</h2>
+        <p>{{ currentTrip.destination || 'No destination set yet' }}</p>
+
+        <div class="stats-row">
+          <div class="stat-pill">
+            <fa-icon [icon]="faCalendarDays"></fa-icon>
+            <span>{{ currentTrip.startDate ? (currentTrip.startDate | date:'dd/MM/yyyy') : 'No start date' }} - {{ currentTrip.endDate ? (currentTrip.endDate | date:'dd/MM/yyyy') : 'No end date' }}</span>
+          </div>
+          <div class="stat-pill">
+            <fa-icon [icon]="faPaperclip"></fa-icon>
+            <span>{{ tripAttachmentsCount(currentTrip) }} attachment{{ tripAttachmentsCount(currentTrip) === 1 ? '' : 's' }}</span>
+          </div>
+          <div class="stat-pill">
+            <fa-icon [icon]="faCalendarDays"></fa-icon>
+            <span>{{ tripDaysCount(currentTrip) }} day{{ tripDaysCount(currentTrip) === 1 ? '' : 's' }}</span>
+          </div>
+          <div class="stat-pill">
+            <fa-icon [icon]="faPaperclip"></fa-icon>
+            <span>{{ tripActivitiesCount(currentTrip) }} activit{{ tripActivitiesCount(currentTrip) === 1 ? 'y' : 'ies' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-cover">
+        @if (currentTrip.coverImageUrl) {
+          <img [src]="currentTrip.coverImageUrl" alt="Trip cover" />
+        } @else {
+          <div class="cover-placeholder">
+            <span>{{ currentTrip.name }}</span>
+            <small>{{ currentTrip.destination || 'Trip cover' }}</small>
+          </div>
+        }
+      </div>
+
+      <div class="hero-actions">
+        <button type="button" class="secondary" (click)="goBack()">
+          <fa-icon [icon]="faArrowLeft"></fa-icon> Back
+        </button>
+        <button type="button" class="primary" (click)="goToEdit()">
+          <fa-icon [icon]="faPenToSquare"></fa-icon> Edit trip
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Trip details</h3>
+      <div class="details-grid">
+        <div>
+          <span>Destination</span>
+          <p>{{ currentTrip.destination || '-' }}</p>
+        </div>
+        <div>
+          <span>Start date</span>
+          <p>{{ currentTrip.startDate ? (currentTrip.startDate | date:'dd/MM/yyyy') : '-' }}</p>
+        </div>
+        <div>
+          <span>End date</span>
+          <p>{{ currentTrip.endDate ? (currentTrip.endDate | date:'dd/MM/yyyy') : '-' }}</p>
+        </div>
+        <div>
+          <span>Created at</span>
+          <p>{{ currentTrip.createdAt ? (currentTrip.createdAt | date:'dd/MM/yyyy HH:mm') : '-' }}</p>
+        </div>
+      </div>
+      @if (currentTrip.description) {
+        <div class="description-block">
+          <span>Description</span>
+          <p>{{ currentTrip.description }}</p>
+        </div>
+      }
+    </section>
+
+    <section class="panel">
+      <div class="section-header">
+        <h3>Trip attachments</h3>
+      </div>
+
+      @if (currentTrip.attachments.length) {
+        <div class="attachments-list">
+          @for (attachment of currentTrip.attachments; track attachment.id) {
+            <article class="attachment-card">
+              <div>
+                <strong>{{ attachment.title }}</strong>
+                <p>{{ attachment.description || 'No description' }}</p>
+              </div>
+              <div class="attachment-actions">
+                @if (attachment.kind === 'link' && attachment.url) {
+                  <button type="button" class="ghost" (click)="openLink(attachment)"><fa-icon [icon]="faLink"></fa-icon> Open</button>
+                }
+                @if (attachment.kind === 'file') {
+                  <button type="button" class="ghost" (click)="downloadAttachment(attachment)"><fa-icon [icon]="faDownload"></fa-icon> Download</button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="empty-state">No trip attachments yet.</p>
+      }
+    </section>
+
+    <section class="panel">
+      <div class="section-header">
+        <h3>Days</h3>
+      </div>
+
+      @if (currentTrip.days.length) {
+        <div class="days-list">
+          @for (day of currentTrip.days; track day.id) {
+            <article class="day-card">
+              <div class="day-header">
+                <div>
+                  <strong>Day {{ day.dayNumber }}</strong>
+                  <span>{{ day.title }}</span>
+                </div>
+                <div class="day-meta">
+                  <span>{{ day.date ? (day.date | date:'dd/MM/yyyy') : '-' }}</span>
+                  <span>{{ dayActivitiesCount(day) }} activit{{ dayActivitiesCount(day) === 1 ? 'y' : 'ies' }}</span>
+                </div>
+              </div>
+
+              @if (day.notes) {
+                <p class="notes">{{ day.notes }}</p>
+              }
+
+              @if (day.activities.length) {
+                <div class="activities-list">
+                  @for (activity of day.activities; track activity.id) {
+                    <div class="activity-row">
+                      <div>
+                        <strong>{{ activity.title }}</strong>
+                        <p>{{ activity.notes || 'No notes' }}</p>
+                      </div>
+                      <span>{{ activity.time || '-' }}</span>
+                      <span>{{ activity.price !== null && activity.price !== undefined ? (activity.price | currency:'GBP') : '-' }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="empty-state compact">No activities for this day.</p>
+              }
+
+              @if (day.attachments.length) {
+                <div class="day-attachments">
+                  @for (attachment of day.attachments; track attachment.id) {
+                    <article class="attachment-card compact">
+                      <div>
+                        <strong>{{ attachment.title }}</strong>
+                        <p>{{ attachment.description || 'No description' }}</p>
+                      </div>
+                      <div class="attachment-actions">
+                        @if (attachment.kind === 'link' && attachment.url) {
+                          <button type="button" class="ghost" (click)="openLink(attachment)"><fa-icon [icon]="faLink"></fa-icon> Open</button>
+                        }
+                        @if (attachment.kind === 'file') {
+                          <button type="button" class="ghost" (click)="downloadAttachment(attachment)"><fa-icon [icon]="faDownload"></fa-icon> Download</button>
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="empty-state">No days added to this trip yet.</p>
+      }
+    </section>
+  } @else {
+    <section class="panel empty-state">
+      <p>Trip not found.</p>
+      <button type="button" class="secondary" (click)="goBack()">Back to trips</button>
+    </section>
+  }
+</div>

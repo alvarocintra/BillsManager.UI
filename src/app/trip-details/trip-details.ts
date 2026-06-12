@@ -155,7 +155,7 @@ export class TripDetails implements OnInit {
           });
           this.toastr.success('Trip saved successfully!', 'Success');
           if (!wasEditMode) {
-            await this.router.navigate(['/trips', savedTrip.id]);
+            await this.router.navigate(['/trips/view', savedTrip.id]);
           } else {
             this.loadTrip(savedTrip.id);
           }
@@ -321,6 +321,12 @@ export class TripDetails implements OnInit {
   }
 
   goBack() {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
     this.router.navigate(['/trips']);
   }
 
