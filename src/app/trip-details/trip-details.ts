@@ -140,7 +140,6 @@ export class TripDetails implements OnInit {
 
     const wasEditMode = this.isEditMode;
     const payload = this.toTripPayload();
-    console.log(this.toTripPayload);
     const request$ = this.trip?.id ? this.repo.updateTrip(payload) : this.repo.addTrip(payload);
 
     request$

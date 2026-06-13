@@ -15,7 +15,6 @@ export class CategoriesRepository {
 
   getCategories(): Observable<Category[]> {
     const token = this.authService.getToken();
-    console.log(`Fetching categories using token: ${token}`);
     return this.http.get<Category[]>(this.apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`

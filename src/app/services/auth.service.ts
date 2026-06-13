@@ -74,7 +74,6 @@ export class AuthService {
       return null;
     }
     const token = localStorage.getItem(this.TOKEN_KEY);
-    console.log('Retrieved token from storage:', token);
     return token || '';
   }
 

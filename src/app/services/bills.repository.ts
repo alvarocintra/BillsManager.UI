@@ -30,7 +30,6 @@ export class BillsRepository {
     sortBy: string | null = 'createdAt',
     sortOrder: string | null = 'desc'): Observable<PagedResult<Bill>> {
       const token = this.authService.getToken();
-      console.log(`Fetching bills using token: ${token}`);
     return this.http.get<PagedResult<Bill>>(this.apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -56,7 +55,6 @@ export class BillsRepository {
 
   getBillById(id: string): Observable<Bill> {
     const token = this.authService.getToken();
-    console.log(`Fetching bill with ID: ${id} using token: ${token}`);
     return this.http.get<Bill>(`${this.apiUrl}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`

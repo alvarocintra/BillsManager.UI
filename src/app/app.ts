@@ -41,8 +41,6 @@ export class App implements OnChanges, OnInit {
     this.currentUser = this.authService.getCurrentUser();
     this.isAuthenticated = this.authService.isAuthenticated();
 
-    console.log('Initial authentication status:', this.isAuthenticated);
-
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.cdr.detectChanges();
@@ -50,7 +48,6 @@ export class App implements OnChanges, OnInit {
 
     this.authService.isAuthenticated$.subscribe(isAuth => {
       this.isAuthenticated = isAuth;
-      console.log('Authentication status changed:', isAuth);
       this.cdr.detectChanges();
     });
   }

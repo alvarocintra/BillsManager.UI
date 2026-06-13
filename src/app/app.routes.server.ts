@@ -2,16 +2,16 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Client },
-  { path: 'dashboard', renderMode: RenderMode.Client },
-  { path: 'categories', renderMode: RenderMode.Server },
-  { path: 'categories/add', renderMode: RenderMode.Server },
-  { path: 'categories/:id', renderMode: RenderMode.Server },
-  { path: 'bills', renderMode: RenderMode.Server },
-  { path: 'bills/add', renderMode: RenderMode.Server },
-  { path: 'bills/:id', renderMode: RenderMode.Server },
-  { path: 'trips', renderMode: RenderMode.Server },
-  { path: 'trips/add', renderMode: RenderMode.Server },
-  { path: 'trips/view/:id', renderMode: RenderMode.Server },
-  { path: 'imports', renderMode: RenderMode.Server },
-  { path: '**', renderMode: RenderMode.Server }
+  { path: 'login', renderMode: RenderMode.Client },
+  { path: 'categories', renderMode: RenderMode.Client },
+  { path: 'categories/add', renderMode: RenderMode.Client },
+  { path: 'categories/:id', renderMode: RenderMode.Client },
+  { path: 'bills', renderMode: RenderMode.Client },
+  { path: 'bills/add', renderMode: RenderMode.Client },
+  { path: 'bills/:id', renderMode: RenderMode.Client },
+  { path: 'trips', renderMode: RenderMode.Client },
+  { path: 'trips/add', renderMode: RenderMode.Client },
+  { path: 'trips/view/:id', renderMode: RenderMode.Client },
+  { path: 'imports', renderMode: RenderMode.Client },
+  { path: '**', renderMode: RenderMode.Client }
 ];

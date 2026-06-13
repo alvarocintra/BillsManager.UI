@@ -65,11 +65,13 @@
   }
 
   th:last-child {
+    display: inline-flex;
+    width: -webkit-fill-available;
     justify-content: flex-end;
   }
 
   td:last-child {
-    display: inline-flex; 
+    display: inline-flex;
     width: -webkit-fill-available;
     justify-content: flex-end;
   }

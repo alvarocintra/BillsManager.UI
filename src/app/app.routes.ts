@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: '', loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },
     { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
     { path: 'categories', loadComponent: () => import('./categories/categories').then(m => m.Categories), canActivate: [authGuard] },
     { path: 'categories/add', loadComponent: () => import('./category-details/category-details').then(m => m.CategoryDetails), canActivate: [authGuard] },
@@ -17,4 +17,5 @@ export const routes: Routes = [
     { path: 'trips/dashboard', loadComponent: () => import('./trip-dashboard/trip-dashboard').then(m => m.TripDashboard), canActivate: [authGuard] },
     { path: 'trips/:id', loadComponent: () => import('./trip-details/trip-details').then(m => m.TripDetails), canActivate: [authGuard] },
     { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },
+    { path: '**', redirectTo: 'dashboard' }
 ];
