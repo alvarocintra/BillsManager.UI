@@ -1,8 +1,19 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/((?!assets/|.*\\.(?:html|js|css|json|ico|png|jpg|jpeg|svg|webp|woff|woff2|ttf|eot)).*)",
-      "destination": "/index.html"
+      "src": "dist/BillsManager.UI/server/main.server.mjs",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(..*\\..*)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/BillsManager.UI/server/main.server.mjs"
     }
   ]
 }
