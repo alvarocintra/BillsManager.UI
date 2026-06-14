@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "outputDirectory": "dist/BillsManager.UI",
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": "dist/BillsManager.UI/**"
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
