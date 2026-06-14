@@ -2,8 +2,11 @@
   "version": 2,
   "routes": [
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(..*\\..*)",
-      "dest": "/$1"
+      "dest": "/browser/$1"
     },
     {
       "src": "/(.*)",
