@@ -5,10 +5,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && mkdir -p api && cp dist/BillsManager.UI/server/server.mjs api/index.js",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:BillsManager.UI": "node dist/BillsManager.UI/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
