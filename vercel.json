@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "dist/BillsManager.UI/server/main.server.mjs",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/(..*\\..*)",
@@ -13,7 +7,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "dist/BillsManager.UI/server/main.server.mjs"
+      "dest": "/api/index.js"
     }
   ]
 }
