@@ -126,7 +126,9 @@
   </div>
   <!-- @if (totalPages > 1) { -->
   <div class="pagination">
-    <div class="empty-space"></div>
+    <div class="reset-filters">
+      <button class="reset-filters-btn" (click)="resetFilters()">Reset Filters</button>
+    </div>
 
     <div class="pagination-controls">
       <button (click)="previousPage()" [disabled]="currentPage === 1">

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Dialog } from '@angular/cdk/dialog';
-import { firstValueFrom } from 'rxjs';
 import { ConfirmDialogComponent } from '../shared/confirmation-modal.component/confirmation-modal.component';
 
 @Injectable({ providedIn: 'root' })

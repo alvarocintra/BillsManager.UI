@@ -171,7 +171,9 @@ export class BillDetails {
   }
 
   async deleteBill(id: string) {
-    const confirmed = await this.confirmDialog.confirm('Confirm Deletion', 'Are you sure you want to delete this bill?');
+    const confirmed = await this.confirmDialog.confirm(
+      'Confirm Deletion',
+      'Are you sure you want to delete this bill?');
     if (confirmed) {
       this.proceedDeleteBill(id);
     }

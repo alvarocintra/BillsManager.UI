@@ -6,16 +6,22 @@ import { BillsRepository } from '../services/bills.repository';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faTrash, faEye, faMoneyBills, faChevronRight, faChevronLeft, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { Bill } from '../models/bill.model';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Category } from '../models/category.model';
 import { CategoriesRepository } from '../services/categories.repository';
 import { BillsFilter } from '../models/bills-filter.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmDialogService } from '../services/confirm-dialog.service';
 
 @Component({
   selector: 'app-bills',
-  imports: [CommonModule, FontAwesomeModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    FormsModule
+  ],
   templateUrl: './bills.html',
   styleUrl: './bills.scss'
 })
@@ -59,7 +65,8 @@ export class Bills implements OnInit {
     private route: ActivatedRoute,
     private destroyRef: DestroyRef,
     private cdr: ChangeDetectorRef,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private confirmDialog: ConfirmDialogService) {
   }
 
   ngOnInit(): void {
@@ -228,6 +235,37 @@ export class Bills implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.updateQueryParams();
+    }
+  }
+
+  async resetFilters(): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm(
+      'Are you sure you want to reset all filters?', 
+      'This will clear all filter values and reset pagination.');
+
+    if (confirmed) {
+      this.filters = {
+        title: '',
+        type: '',
+        paid: '',
+        category: '',
+        fromDueDate: undefined,
+        toDueDate: undefined,
+        fromCreatedAt: undefined,
+        toCreatedAt: undefined,
+        fromAmount: undefined,
+        toAmount: undefined
+      };
+
+      this.currentPage = 1;
+      this.pageSize = 10;
+
+      this.updateQueryParams();
+      
+      setTimeout(() => {
+        this.loadBills();
+        this.cdr.detectChanges();
+      }, 100);
     }
   }
 

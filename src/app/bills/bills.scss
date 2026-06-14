@@ -210,9 +210,25 @@
   gap: 1rem;
 
   // Garante o equilíbrio para o centro ficar realmente no centro
-  .empty-space {
+  .reset-filters {
     flex: 1;
     display: block;
+    
+    .reset-filters-btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.7rem 1rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(44, 62, 80, 0.18);
+      margin-left: 1rem;
+
+      &:hover {
+        background-color: #c0392b;
+      }
+    }
   }
 
   // Bloco centralizado
@@ -269,10 +285,6 @@
   @media (max-width: 768px) {
     flex-direction: column; /* Empilha os elementos */
     gap: 1rem;
-
-    .empty-space {
-      display: none; /* Esconde o espaço vazio no mobile */
-    }
 
     .page-size {
       justify-content: center; /* Centraliza o select no mobile */
