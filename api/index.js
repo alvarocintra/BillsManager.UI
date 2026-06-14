@@ -1,16 +1,12 @@
-import { resolve } from 'path';
-import { pathToFileURL } from 'url';
-
+// api/index.js
 export default async function handler(req, res) {
   try {
-    // resolve garante o caminho absoluto correto a partir da raiz da função no Vercel
-    const serverPath = resolve(process.cwd(), 'dist/BillsManager.UI/server/server.mjs');
-    const fileUrl = pathToFileURL(serverPath).href;
-
-    const { reqHandler } = await import(fileUrl);
+    // Usando uma string literal fixa para forçar a Vercel a rastrear e incluir o arquivo no build
+    const { reqHandler } = await import('../dist/BillsManager.UI/server/server.mjs');
+    
     return reqHandler(req, res);
   } catch (error) {
-    console.error('Erro ao carregar o servidor Angular SSR:', error);
+    console.error('Erro crítico no servidor Angular SSR:', error);
     return res.status(500).json({
       message: 'Falha ao inicializar o servidor Angular SSR.',
       error: error.message,
