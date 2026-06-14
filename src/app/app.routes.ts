@@ -17,5 +17,5 @@ export const routes: Routes = [
     { path: 'trips/dashboard', loadComponent: () => import('./trip-dashboard/trip-dashboard').then(m => m.TripDashboard), canActivate: [authGuard] },
     { path: 'trips/:id', loadComponent: () => import('./trip-details/trip-details').then(m => m.TripDetails), canActivate: [authGuard] },
     { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },
-    { path: '**', redirectTo: 'dashboard' }
+    { path: '**', redirectTo: '/' }
 ];
