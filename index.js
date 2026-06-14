@@ -1,10 +1,20 @@
+// index.js
+import handlerServer from './dist/BillsManager.UI/server/server.mjs';
 
 export default async function handler(req, res) {
-    try {
-        const { reqHandler } = await import('./dist/BillsManager.UI/server/server.mjs');
-        return reqHandler(req, res);
-    } catch (error) {
-        console.error('Error occurred while handling request:', error);
-        res.status(500).json({ error: error });
+  try {
+    // Ao exportar o request handler como default no server.ts, 
+    // ele é mapeado diretamente no import acima
+    if (handlerServer && handlerServer.reqHandler) {
+      return handlerServer.reqHandler(req, res);
     }
+    
+    // Se o import veio direto como a função:
+    return handlerServer(req, res);
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Falha no runtime do servidor Angular SSR.',
+      error: error.message
+    });
+  }
 }
