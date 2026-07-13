@@ -3,7 +3,7 @@
     {
       "src": ".",
       "use": "npm run build",
-      "output": "dist/angular"
+      "output": "dist/angular/browser"
     }
   ],
   "routes": [
