@@ -20,7 +20,6 @@
     "@angular/platform-browser": "^20.3.23",
     "@angular/platform-server": "^20.3.23",
     "@angular/router": "^20.3.23",
-    "@angular/ssr": "^20.3.23",
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/angular-fontawesome": "^2.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
