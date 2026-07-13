@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/angular",
+            "outputPath": "dist/BillsManager.UI",
             "outputMode": "static",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
