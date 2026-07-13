@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": ".",
+      "use": "npm run build",
+      "output": "dist/angular"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
