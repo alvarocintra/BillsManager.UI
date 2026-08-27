@@ -17,6 +17,9 @@
         @if (errorMessage) {
         <div class="alert alert-danger">
           {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="errorMessage = null">
+            <fa-icon [icon]="faClose"></fa-icon>
+          </button>
         </div>
         }
         <label for="loginEmail">Email Address</label>

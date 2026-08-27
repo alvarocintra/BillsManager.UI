@@ -238,3 +238,18 @@
     font-size: 0.95rem;
   }
 }
+
+.btn-close {
+  background: none;
+  border: none;
+  color: #721c24;
+  font-size: 1rem;
+  cursor: pointer;
+  float: right;
+  top: 0.5rem;
+  right: 0.5rem;
+
+  &:hover {
+    color: #6b000b;
+  }
+}
