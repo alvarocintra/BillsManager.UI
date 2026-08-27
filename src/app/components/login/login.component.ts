@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,12 +21,14 @@ export class LoginComponent implements OnInit {
   showLoginPassword = false;
   showRegisterPassword = false;
   showConfirmPassword = false;
+  errorMessage: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +92,8 @@ export class LoginComponent implements OnInit {
       error: (error) => {
         this.isLoading = false;
         this.toastr.error(error.message || 'Login failed');
+        this.errorMessage = error.message || 'Login failed';
+        this.cdr.detectChanges();
       }
     });
   }

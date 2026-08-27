@@ -14,6 +14,11 @@
     <!-- @if (isLoginMode) { -->
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="form-group">
+        @if (errorMessage) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+        }
         <label for="loginEmail">Email Address</label>
         <input
           id="loginEmail"
