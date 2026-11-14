@@ -24,16 +24,20 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    // Skip adding token to login and register endpoints
+    // Authentication endpoints do not require an active tenant.
     const isAuthEndpoint = request.url.includes('/api/auth/login') || 
-                          request.url.includes('/api/auth/register');
+                          request.url.includes('/api/auth/register') ||
+                          request.url.includes('/auth/login') ||
+                          request.url.includes('/auth/register');
     
     const token = this.authService.getToken();
 
     if (token && !isAuthEndpoint) {
+      const tenantId = this.authService.getTenantId();
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          ...(tenantId ? { 'X-Tenant-Id': tenantId } : {})
         }
       });
     }

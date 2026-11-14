@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ChartComponent } from "../shared/chart.component/chart.component";
 import { BillsRepository } from '../services/bills.repository';
 import { finalize } from 'rxjs';
@@ -11,12 +12,14 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ChartComponent, FontAwesomeModule],
+  imports: [ChartComponent, FontAwesomeModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush // Adicione esta linha
 })
 export class Dashboard implements OnInit {
+  spendingFromDate = '';
+  spendingToDate = '';
   bills: Bill[] = [];
   totalItems = 0;
   currentPage = 1;
@@ -151,6 +154,11 @@ export class Dashboard implements OnInit {
     labels: [],
     datasets: []
   };
+
+  chartDataRecurringExpenses: any = {
+    labels: [],
+    datasets: []
+  };
   Math: any;
 
   constructor(
@@ -190,6 +198,7 @@ export class Dashboard implements OnInit {
           this.setIncomeVsExpenseChartData();
           this.setExpenseDistributionChartData();
           this.setMoMChartData();
+          this.setRecurringExpensesChartData();
           this.getBillsPerMonth();
           this.getBillsPerCategory();
           this.cdr.detectChanges();
@@ -500,11 +509,21 @@ export class Dashboard implements OnInit {
  */
   setExpenseDistributionChartData() {
     const categoryTotals: Record<string, number> = {};
+    const fromDate = this.spendingFromDate ? new Date(`${this.spendingFromDate}T00:00:00`) : null;
+    const toDate = this.spendingToDate ? new Date(`${this.spendingToDate}T23:59:59.999`) : null;
 
     // 1. Somar os valores por categoria
     for (const bill of this.bills) {
       // Filtra APENAS despesas
       if (bill.type === 'expense') {
+        const dueDate = new Date(bill.dueDate);
+        if (fromDate && dueDate < fromDate) {
+          continue;
+        }
+        if (toDate && dueDate > toDate) {
+          continue;
+        }
+
         const catName = bill.category?.name ?? 'Uncategorized';
         // Usamos Math.abs() porque o valor na bill pode vir negativo,
         // mas queremos o valor positivo gasto.
@@ -532,6 +551,53 @@ export class Dashboard implements OnInit {
     };
 
     this.cdr.detectChanges();
+  }
+
+  onSpendingDateChange(): void {
+    this.setExpenseDistributionChartData();
+  }
+
+  setRecurringExpensesChartData(): void {
+    const monthlyTotals: Record<string, { recurring: number; oneOff: number; timestamp: number }> = {};
+
+    for (const bill of this.bills) {
+      if (bill.type !== 'expense') continue;
+
+      const dueDate = new Date(bill.dueDate);
+      const monthKey = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = dueDate.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+
+      if (!monthlyTotals[monthKey]) {
+        monthlyTotals[monthKey] = { recurring: 0, oneOff: 0, timestamp: dueDate.getTime() };
+      }
+
+      const amount = Math.abs(bill.amount);
+      if (bill.isRecurring) {
+        monthlyTotals[monthKey].recurring += amount;
+      } else {
+        monthlyTotals[monthKey].oneOff += amount;
+      }
+    }
+
+    const sortedMonths = Object.keys(monthlyTotals).sort();
+    this.chartDataRecurringExpenses = {
+      labels: sortedMonths.map(key => {
+        const { timestamp } = monthlyTotals[key];
+        return new Date(timestamp).toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+      }),
+      datasets: [
+        {
+          label: 'Recurring expenses',
+          data: sortedMonths.map(key => monthlyTotals[key].recurring),
+          backgroundColor: '#4caf50'
+        },
+        {
+          label: 'One-off expenses',
+          data: sortedMonths.map(key => monthlyTotals[key].oneOff),
+          backgroundColor: '#42a5f5'
+        }
+      ]
+    };
   }
 
   setMoMChartData() {

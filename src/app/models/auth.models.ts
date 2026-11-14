@@ -24,3 +24,8 @@ export interface UserInfo {
   firstName?: string;
   lastName?: string;
 }
+
+export interface TenantAccess {
+  id: string;
+  role?: string;
+}

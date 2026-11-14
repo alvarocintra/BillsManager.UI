@@ -45,10 +45,42 @@
             </ul>
             }
           </li>
+
+          <li class="submenu-wrap">
+            <button type="button" class="submenu-toggle" (click)="toggleInvestments()">
+              <span>Investments</span>
+              <fa-icon [icon]="faChevronDown" [class.rotated]="investmentsOpen" class="chevron"></fa-icon>
+            </button>
+
+            @if (investmentsOpen) {
+            <ul class="submenu">
+              <li><a routerLink="/investments" routerLinkActive="active">Positions</a></li>
+              <li><a routerLink="/investments/dashboard" routerLinkActive="active">Dashboard</a></li>
+            </ul>
+            }
+          </li>
         </ul>
 
         @if (currentUser) {
         <div class="nav-user">
+          @if (tenantAccess.length > 1) {
+          <label class="tenant-switcher">
+            <span>Workspace</span>
+            <select [ngModel]="activeTenantId" (ngModelChange)="changeTenant($event)" aria-label="Select workspace">
+              @for (tenant of tenantAccess; track tenant.id) {
+              <option [value]="tenant.id">{{ tenant.role ? tenant.id + ' · ' + tenant.role : tenant.id }}</option>
+              }
+            </select>
+          </label>
+          } @else if (tenantAccess.length === 1) {
+          <div class="tenant-switcher" aria-label="Active workspace">
+            <span>Workspace</span>
+            <strong>{{ tenantAccess[0].id }}</strong>
+            @if (tenantAccess[0].role) {
+            <small>{{ tenantAccess[0].role }}</small>
+            }
+          </div>
+          }
           <div class="user-info">
             <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
             <span class="user-email">{{ currentUser.email }}</span>

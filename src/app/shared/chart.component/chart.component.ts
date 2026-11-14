@@ -18,6 +18,7 @@ import { NgApexchartsModule, ChartComponent as ApexChartComponent } from 'ng-ape
             (click)="toggleExpanded()">
             {{ isExpanded ? 'Minimize' : 'Maximize' }}
           </button>
+          <ng-content select="[chart-header-control]"></ng-content>
         </div>
 
         <div class="chart-body">
@@ -88,6 +89,7 @@ styles: [`
       margin-bottom: 1rem;
       height: 40px; /* Altura fixa para o cabeçalho mapeado */
     }
+    .chart-header ::ng-deep [chart-header-control] { flex: 0 0 auto; }
     .chart-header h2 { margin: 0; font-size: 1.1rem; color: #1e293b; font-weight: 600; }
     
     /* Configuração reativa do corpo do gráfico */
@@ -144,6 +146,7 @@ export class ChartComponent implements OnChanges {
   @Input() showDataLabels: boolean = true; 
   @Input() decimalPlaces: number = 2;       
   @Input() showLegend: boolean = true; // <-- NOVO: Permite ocultar/mostrar a legenda do gráfico
+  @Input() valueFormat: 'currency' | 'number' = 'currency';
 
   isExpanded = false;
   apexSeries: any[] = [];
@@ -161,9 +164,13 @@ export class ChartComponent implements OnChanges {
       changes['chartType'] || 
       changes['showDataLabels'] || 
       changes['decimalPlaces'] ||
-      changes['showLegend']
+      changes['showLegend'] ||
+      changes['valueFormat']
     ) {
       this.adaptChartData();
+      if (this.isExpanded) {
+        this.updateLayout();
+      }
     }
   }
 
@@ -194,9 +201,10 @@ export class ChartComponent implements OnChanges {
 
         // Força a atualização com o valor exato em pixels calculado para a tela atual
         this.chartInstance.updateOptions({
-          chart: {
-            height: targetHeight
-          }
+        chart: {
+          height: targetHeight,
+          width: '100%'
+        }
         }, false, false);
 
         // Notifica o core do ApexCharts para reajustar o Grid e os eixos
@@ -220,6 +228,9 @@ export class ChartComponent implements OnChanges {
 
     const decimals = this.decimalPlaces;
     const isCircular = typeMap === 'donut';
+    const formatValue = (value: number) => this.valueFormat === 'currency'
+      ? `£${value.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`
+      : value.toLocaleString('en-GB', { maximumFractionDigits: 0 });
 
     this.apexOptions = {
       chart: {
@@ -241,10 +252,7 @@ export class ChartComponent implements OnChanges {
             return `${val.toFixed(1)}%`;
           }
           // Para barras/linhas, mostra o valor financeiro configurado
-          return `£${val.toLocaleString('en-US', { 
-            minimumFractionDigits: decimals, 
-            maximumFractionDigits: decimals 
-          })}`;
+          return formatValue(val);
         }
       },
       // Legenda controlada dinamicamente via @Input
@@ -266,22 +274,14 @@ export class ChartComponent implements OnChanges {
       yaxis: {
         show: !isCircular, // Donut não usa eixo Y estrutural
         labels: {
-          formatter: (val: number) => {
-            return `£${val.toLocaleString('en-US', { 
-              minimumFractionDigits: decimals, 
-              maximumFractionDigits: decimals 
-            })}`;
-          }
+          formatter: (val: number) => formatValue(val)
         }
       },
       tooltip: {
         y: {
           formatter: (val: number) => {
             // No tooltip do Donut, queremos ver o valor real em dinheiro, não a porcentagem
-            return `£${val.toLocaleString('en-US', { 
-              minimumFractionDigits: decimals, 
-              maximumFractionDigits: decimals 
-            })}`;
+            return formatValue(val);
           }
         }
       }

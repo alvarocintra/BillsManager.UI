@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Category } from '../models/category.model';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,46 +10,25 @@ import { AuthService } from './auth.service';
 export class CategoriesRepository {
   private readonly apiUrl = environment.apiUrl + '/categories';
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
   getCategories(): Observable<Category[]> {
-    const token = this.authService.getToken();
-    return this.http.get<Category[]>(this.apiUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    return this.http.get<Category[]>(this.apiUrl);
   }
 
   getCategoryById(id: string): Observable<Category> {
-    return this.http.get<Category>(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.get<Category>(`${this.apiUrl}/${id}`);
   }
 
   addCategory(category: Category): Observable<any> {
-    return this.http.post(this.apiUrl, category, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.post(this.apiUrl, category);
   }
 
   updateCategory(category: Category): Observable<any> {
-    return this.http.put(`${this.apiUrl}`, category, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.put(`${this.apiUrl}`, category);
   }
 
   deleteCategory(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

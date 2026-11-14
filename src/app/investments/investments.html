@@ -1,0 +1,65 @@
+<section class="investments-page">
+  <header class="page-heading">
+    <div><p class="eyebrow">Portfolio</p><h1>Investments</h1><p>Manage positions and record valuations over time.</p></div>
+    <button class="primary" type="button" (click)="startCreate()">＋ Add investment</button>
+  </header>
+
+  @if (formOpen) {
+    <form class="panel investment-form" (ngSubmit)="save()">
+      <div class="panel-heading"><h2>{{ editingId ? 'Edit investment' : 'New investment' }}</h2><button type="button" class="text-button" (click)="cancelForm()">Close</button></div>
+      <div class="form-grid">
+        <label>Type<select name="type" [(ngModel)]="form.type"><option value="stock">Stock</option><option value="other">Other</option></select></label>
+        <label>Name<input name="name" [(ngModel)]="form.name" required /></label>
+        <label>Category<input name="category" [(ngModel)]="form.category" required /></label>
+        <label>Resource<input name="resource" [(ngModel)]="form.resource" required /></label>
+        <label>Currency<input name="currency" [(ngModel)]="form.currency" maxlength="3" required /></label>
+        <label>Ticker<input name="ticker" [(ngModel)]="form.ticker" /></label>
+        <label>Quantity<input name="quantity" type="number" min="0" step="any" [(ngModel)]="form.quantity" /></label>
+        @if (!editingId) {
+          <label>{{ form.type === 'stock' ? 'Price per share (optional)' : 'Initial total value (optional)' }}<input name="initialValue" type="number" min="0" step="any" [(ngModel)]="form.initialValue" /></label>
+          <label>Valuation date (optional)<input name="valuationDate" type="date" [(ngModel)]="form.valuationDate" /></label>
+        }
+      </div>
+      @if (initialTotalPreview !== null) {
+        <p class="hint">Initial position value: <strong>{{ initialTotalPreview | currency:form.currency:'symbol-narrow':'1.2-2' }}</strong>@if (form.type === 'stock') { <span> · {{ form.quantity ?? 0 }} shares × {{ form.initialValue | currency:form.currency:'symbol-narrow':'1.2-2' }} per share</span> }</p>
+      }
+      @if (editingId) { <p class="hint">To update the current value, record a valuation after saving.</p> }
+      <div class="form-actions"><button type="button" class="secondary" (click)="cancelForm()">Cancel</button><button class="primary" [disabled]="saving">{{ saving ? 'Saving…' : 'Save investment' }}</button></div>
+    </form>
+  }
+
+  @if (snapshotTarget) {
+    <form class="panel snapshot-form" (ngSubmit)="saveSnapshot()">
+      <div class="panel-heading"><h2>Record valuation · {{ snapshotTarget.name }}</h2><button type="button" class="text-button" (click)="snapshotTarget = null">Close</button></div>
+      <div class="form-grid compact">
+        <label>{{ snapshotTarget.type === 'stock' ? 'Price per share' : 'Total position value' }}<input name="snapshotValue" type="number" min="0" step="any" [(ngModel)]="snapshotValue" required /></label>
+        <label>Currency<input name="snapshotCurrency" maxlength="3" [(ngModel)]="snapshotCurrency" required /></label>
+        <label>Valuation date (optional)<input name="snapshotDate" type="date" [(ngModel)]="snapshotDate" /></label>
+      </div>
+      @if (snapshotTotalPreview !== null) {
+        <p class="hint">Updated position value: <strong>{{ snapshotTotalPreview | currency:snapshotCurrency:'symbol-narrow':'1.2-2' }}</strong>@if (snapshotTarget.type === 'stock') { <span> · {{ snapshotTarget.quantity ?? 0 }} shares × {{ snapshotValue | currency:snapshotCurrency:'symbol-narrow':'1.2-2' }} per share</span> }</p>
+      }
+      <div class="form-actions"><button class="primary" [disabled]="saving || snapshotValue === null">Save valuation</button></div>
+    </form>
+  }
+
+  @if (loading) { <div class="panel state">Loading investments…</div> }
+  @else if (error) { <div class="panel state error">{{ error }} <button class="secondary" (click)="load()">Retry</button></div> }
+  @else if (!investments.length) { <div class="panel state"><h2>No investments yet</h2><p>Add a position to start tracking your portfolio.</p><button class="primary" (click)="startCreate()">Add investment</button></div> }
+  @else {
+    <div class="table-panel">
+      <div class="table-scroll"><table><thead><tr><th>Investment</th><th>Type</th><th>Category</th><th>Resource</th><th>Quantity</th><th>Current value</th><th>Updated</th><th>Actions</th></tr></thead>
+        <tbody>@for (item of investments; track trackById($index, item)) {
+          <tr><td><strong>{{ item.name }}</strong>@if (item.ticker) { <small>{{ item.ticker }}</small> }</td><td>{{ item.type }}</td><td>{{ item.category }}</td><td>{{ item.resource }}</td><td>{{ item.quantity ?? '—' }}</td><td class="value">{{ getPositionValue(item) | currency:item.currency:'symbol-narrow':'1.2-2' }}@if (item.type === 'stock' && item.unitPrice != null) { <small>{{ item.quantity }} × {{ item.unitPrice | currency:item.currency:'symbol-narrow':'1.2-2' }} per share</small> }</td><td>{{ item.lastUpdatedAt | date:'mediumDate' }}</td>
+            <td><div class="actions"><button (click)="openSnapshot(item)">Value</button><button (click)="openHistory(item)">History</button><button (click)="startEdit(item)">Edit</button><button class="danger" (click)="delete(item)">Delete</button></div></td></tr>
+        }</tbody>
+      </table></div>
+    </div>
+  }
+
+  @if (historyInvestment) {
+    <div class="modal-backdrop" (click)="closeHistory()"><section class="panel history-modal" (click)="$event.stopPropagation()"><div class="panel-heading"><h2>{{ historyInvestment.name }} history</h2><button type="button" class="text-button" (click)="closeHistory()">Close</button></div>
+      @if (!history.length) { <p class="hint">No valuation snapshots recorded.</p> } @else { <ol class="history-list">@for (row of history; track row.id) { <li><span>{{ row.recordedAt | date:'medium' }}</span><strong>{{ row.value | currency:row.currency:'symbol-narrow':'1.2-2' }}</strong></li> }</ol> }
+    </section></div>
+  }
+</section>

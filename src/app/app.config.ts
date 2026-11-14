@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZonelessChangeDetection, provideBrowserGlobal
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { CategoriesRepository } from './services/categories.repository';
 
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

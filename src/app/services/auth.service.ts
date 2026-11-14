@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { LoginResponse, RegisterRequest, UserInfo } from '../models/auth.models';
+import { LoginResponse, RegisterRequest, TenantAccess, UserInfo } from '../models/auth.models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -14,6 +14,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'user_info';
+  private readonly TENANT_KEY = 'active_tenant_id';
   private readonly API_URL = environment.apiUrl + '/auth';
   private expirationTimer: ReturnType<typeof setTimeout> | null = null;
   
@@ -55,6 +56,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.TENANT_KEY);
     }
     if (this.expirationTimer) {
       clearTimeout(this.expirationTimer);
@@ -81,6 +83,55 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  getTenantId(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+    const allowedTenants = this.getTenantAccess();
+    const storedTenantId = localStorage.getItem(this.TENANT_KEY);
+    if (storedTenantId && allowedTenants.some(tenant => tenant.id === storedTenantId)) {
+      return storedTenantId;
+    }
+
+    const defaultTenantId = allowedTenants.length === 1 ? allowedTenants[0].id : null;
+    if (defaultTenantId) {
+      localStorage.setItem(this.TENANT_KEY, defaultTenantId);
+    } else {
+      localStorage.removeItem(this.TENANT_KEY);
+    }
+    return defaultTenantId;
+  }
+
+  setTenantId(tenantId: string): void {
+    const normalizedTenantId = tenantId.trim();
+    if (!normalizedTenantId || !this.getTenantAccess().some(tenant => tenant.id === normalizedTenantId)) {
+      throw new Error('The selected tenant is not available to this user');
+    }
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.TENANT_KEY, normalizedTenantId);
+    }
+  }
+
+  getTenantAccess(): TenantAccess[] {
+    const token = this.getToken();
+    if (!token) {
+      return [];
+    }
+
+    const claims = this.jwtHelper.decodeToken(token) as Record<string, unknown> | null;
+    if (!claims) {
+      return [];
+    }
+
+    const tenantIds = this.parseStringArrayClaim(claims['tenantIds']);
+    const tenantRoles = this.parseStringArrayClaim(claims['tenantRoles']);
+    return tenantIds.map((id, index) => ({ id, role: tenantRoles[index] }));
+  }
+
+  selectTenant(tenantId: string): void {
+    this.setTenantId(tenantId);
+  }
+
   refreshTokenIfNeeded(): Observable<LoginResponse> {
     if (!this.hasValidToken()) {
       return throwError(() => new Error('No valid token to refresh'));
@@ -97,6 +148,11 @@ export class AuthService {
     if (response && response.token) {
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem(this.TOKEN_KEY, response.token);
+        localStorage.removeItem(this.TENANT_KEY);
+        const tenantAccess = this.getTenantAccess();
+        if (tenantAccess.length === 1) {
+          localStorage.setItem(this.TENANT_KEY, tenantAccess[0].id);
+        }
         const user: UserInfo = {
           email: response.email,
           userId: response.userId,
@@ -108,6 +164,23 @@ export class AuthService {
         this.isAuthenticatedSubject.next(true);
         this.scheduleTokenExpirationCheck(response.token);
       }
+    }
+  }
+
+  private parseStringArrayClaim(value: unknown): string[] {
+    if (Array.isArray(value)) {
+      return value.filter((item): item is string => typeof item === 'string' && item.length > 0);
+    }
+    if (typeof value !== 'string') {
+      return [];
+    }
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return Array.isArray(parsed)
+        ? parsed.filter((item): item is string => typeof item === 'string' && item.length > 0)
+        : [];
+    } catch {
+      return [];
     }
   }
 

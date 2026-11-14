@@ -1,0 +1,23 @@
+<section class="investment-dashboard">
+  <header class="dashboard-heading"><div><p class="eyebrow">Portfolio analytics</p><h1>Investments dashboard</h1><p>Current allocation and recorded portfolio valuations.</p></div>
+    <label class="currency-picker">Currency<select [(ngModel)]="selectedCurrency" (ngModelChange)="onCurrencyChange()"><option value="" disabled>Select currency</option>@for (item of summary.currencies; track item.currency) { <option [value]="item.currency">{{ item.currency }}</option> }</select></label>
+  </header>
+
+  @if (loading) { <div class="dashboard-card empty">Loading portfolio summary…</div> }
+  @else if (error) { <div class="dashboard-card empty error">{{ error }} <button class="secondary" (click)="loadSummary()">Retry</button></div> }
+  @else if (!summary.currencies.length) { <div class="dashboard-card empty"><h2>No portfolio data yet</h2><p>Add investments and record valuations to see your dashboard.</p></div> }
+  @else if (selectedSummary; as current) {
+    <article class="total-card"><div><span>Total portfolio value</span><strong>{{ current.totalValue | currency:current.currency:'symbol-narrow':'1.2-2' }}</strong></div><small>Values are shown separately for each currency.</small></article>
+    <section class="chart-grid">
+      <article class="dashboard-card chart-card"><h2>By type</h2>@if (allocations.type.labels.length) { <apx-chart [series]="allocations.type.series" [chart]="allocationChartOptions.chart" [labels]="allocations.type.labels" [legend]="allocationChartOptions.legend" [dataLabels]="allocationChartOptions.dataLabels" [tooltip]="allocationChartOptions.tooltip" [colors]="allocationChartOptions.colors"></apx-chart> } @else { <p class="empty-chart">No type breakdown available.</p> }</article>
+      <article class="dashboard-card chart-card"><h2>By category</h2>@if (allocations.category.labels.length) { <apx-chart [series]="allocations.category.series" [chart]="allocationChartOptions.chart" [labels]="allocations.category.labels" [legend]="allocationChartOptions.legend" [dataLabels]="allocationChartOptions.dataLabels" [tooltip]="allocationChartOptions.tooltip" [colors]="allocationChartOptions.colors"></apx-chart> } @else { <p class="empty-chart">No category breakdown available.</p> }</article>
+      <article class="dashboard-card chart-card"><h2>By resource</h2>@if (allocations.resource.labels.length) { <apx-chart [series]="allocations.resource.series" [chart]="allocationChartOptions.chart" [labels]="allocations.resource.labels" [legend]="allocationChartOptions.legend" [dataLabels]="allocationChartOptions.dataLabels" [tooltip]="allocationChartOptions.tooltip" [colors]="allocationChartOptions.colors"></apx-chart> } @else { <p class="empty-chart">No resource breakdown available.</p> }</article>
+      <article class="dashboard-card chart-card positions-chart"><h2>Largest positions</h2><p class="chart-note">Top 10 by current value in {{ current.currency }}.</p>@if (positionSeries[0]?.data?.length) { <apx-chart [series]="positionSeries" [chart]="positionOptions.chart" [plotOptions]="positionOptions.plotOptions" [xaxis]="positionOptions.xaxis" [dataLabels]="positionOptions.dataLabels" [tooltip]="positionOptions.tooltip" [colors]="positionOptions.colors"></apx-chart> } @else { <p class="empty-chart">No positions in this currency.</p> }</article>
+    </section>
+    <section class="dashboard-card history-card"><div class="history-heading"><div><h2>Valuation history by investment</h2><p>Each series shows individual snapshots in {{ current.currency }}; values are not summed across positions.</p></div><div class="date-filters"><label>From<input type="date" [(ngModel)]="fromDate" /></label><label>To<input type="date" [(ngModel)]="toDate" /></label><button class="secondary" (click)="applyDates()">Apply</button></div></div>
+      @if (historyLoading) { <p class="empty-chart">Loading history…</p> }
+      @else if (historySeries[0]?.data?.length) { <apx-chart [series]="historySeries" [chart]="historyOptions.chart" [xaxis]="historyOptions.xaxis" [yaxis]="historyOptions.yaxis" [stroke]="historyOptions.stroke" [fill]="historyOptions.fill" [dataLabels]="historyOptions.dataLabels" [tooltip]="historyOptions.tooltip" [colors]="historyOptions.colors"></apx-chart> }
+      @else { <p class="empty-chart">No recorded valuations for this currency and period yet.</p> }
+    </section>
+  }
+</section>

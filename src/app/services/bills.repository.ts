@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { Bill } from '../models/bill.model';
 import { PagedResult } from '../models/paged-result.model';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ import { AuthService } from './auth.service';
 export class BillsRepository {
   private readonly apiUrl = environment.apiUrl + '/bills';
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
   getBills(
     pageNumber: number,
@@ -29,11 +28,7 @@ export class BillsRepository {
     toCreatedAt: Date | null = null,
     sortBy: string | null = 'createdAt',
     sortOrder: string | null = 'desc'): Observable<PagedResult<Bill>> {
-      const token = this.authService.getToken();
     return this.http.get<PagedResult<Bill>>(this.apiUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
       params: {
         pageNumber,
         pageSize,
@@ -54,35 +49,18 @@ export class BillsRepository {
   }
 
   getBillById(id: string): Observable<Bill> {
-    const token = this.authService.getToken();
-    return this.http.get<Bill>(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    return this.http.get<Bill>(`${this.apiUrl}/${id}`);
   }
 
   addBill(bill: Bill): Observable<any> {
-    return this.http.post(this.apiUrl, bill, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.post(this.apiUrl, bill);
   }
 
   updateBill(bill: Bill): Observable<any> {
-    return this.http.put(`${this.apiUrl}`, bill, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.put(`${this.apiUrl}`, bill);
   }
 
   deleteBill(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${this.authService.getToken()}`
-      }
-    });
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

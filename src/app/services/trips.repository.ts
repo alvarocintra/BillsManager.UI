@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { Trip, TripAttachment } from '../models/trip.model';
 
@@ -11,36 +10,26 @@ import { Trip, TripAttachment } from '../models/trip.model';
 export class TripsRepository {
   private readonly apiUrl = environment.apiUrl + '/trips';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(this.apiUrl, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<Trip[]>(this.apiUrl);
   }
 
   getTripById(id: string): Observable<Trip> {
-    return this.http.get<Trip>(`${this.apiUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<Trip>(`${this.apiUrl}/${id}`);
   }
 
   addTrip(trip: Trip): Observable<Trip> {
-    return this.http.post<Trip>(this.apiUrl, trip, {
-      headers: this.getHeaders(true, true)
-    });
+    return this.http.post<Trip>(this.apiUrl, trip);
   }
 
   updateTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.apiUrl}/${trip.id}`, trip, {
-      headers: this.getHeaders(true, true)
-    });
+    return this.http.put<Trip>(`${this.apiUrl}/${trip.id}`, trip);
   }
 
   deleteTrip(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   addLinkAttachment(tripId: string, payload: {
@@ -50,9 +39,7 @@ export class TripsRepository {
     url: string;
     isPhoto?: boolean;
   }): Observable<TripAttachment> {
-    return this.http.post<TripAttachment>(`${this.apiUrl}/${tripId}/attachments/link`, payload, {
-      headers: this.getHeaders(true, true)
-    });
+    return this.http.post<TripAttachment>(`${this.apiUrl}/${tripId}/attachments/link`, payload);
   }
 
   uploadAttachment(tripId: string, payload: {
@@ -75,35 +62,16 @@ export class TripsRepository {
     }
     formData.append('isPhoto', String(payload.isPhoto ?? false));
 
-    return this.http.post<TripAttachment>(`${this.apiUrl}/${tripId}/attachments/upload`, formData, {
-      headers: this.getHeaders(false, false)
-    });
+    return this.http.post<TripAttachment>(`${this.apiUrl}/${tripId}/attachments/upload`, formData);
   }
 
   downloadAttachment(tripId: string, attachmentId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${tripId}/attachments/${attachmentId}/download`, {
-      headers: this.getHeaders(),
       responseType: 'blob'
     });
   }
 
   deleteAttachment(tripId: string, attachmentId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${tripId}/attachments/${attachmentId}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  private getHeaders(includeAuth = true, includeJsonContentType = false): Record<string, string> {
-    const headers: Record<string, string> = {};
-    if (includeAuth) {
-      const token = this.authService.getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-    if (includeJsonContentType) {
-      headers['Content-Type'] = 'application/json';
-    }
-    return headers;
+    return this.http.delete<void>(`${this.apiUrl}/${tripId}/attachments/${attachmentId}`);
   }
 }

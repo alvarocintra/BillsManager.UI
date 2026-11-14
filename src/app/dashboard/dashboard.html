@@ -50,6 +50,16 @@
                [chartType]="'doughnut'" 
                [chartData]="chartDataExpenseDistribution"
                [showLegend]="true">
+        <div chart-header-control class="spending-date-filter">
+            <label for="spending-from-date">De
+                <input id="spending-from-date" type="date" [(ngModel)]="spendingFromDate"
+                       (ngModelChange)="onSpendingDateChange()" />
+            </label>
+            <label for="spending-to-date">Até
+                <input id="spending-to-date" type="date" [(ngModel)]="spendingToDate"
+                       (ngModelChange)="onSpendingDateChange()" />
+            </label>
+        </div>
     </app-chart>
     <app-chart [chartTitle]="'Monthly Expenses by Category (Stacked)'" 
                [chartType]="'bar'" 
@@ -94,6 +104,7 @@
     <app-chart [chartTitle]="'Number of Bills per Month'"
                [chartType]="'bar'"
                [chartData]="chartBillsPerMonth"
+               [valueFormat]="'number'"
                [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
@@ -101,7 +112,16 @@
     <app-chart [chartTitle]="'Number of Bills per Category'"
                [chartType]="'bar'"
                [chartData]="chartBillsPerCategory"
+               [valueFormat]="'number'"
                [showLegend]="false"
+               [showDataLabels]="false"
+               [decimalPlaces]="2">
+    </app-chart>
+    <app-chart [chartTitle]="'Recurring vs One-off Expenses by Month'"
+               [chartType]="'bar'"
+               [chartData]="chartDataRecurringExpenses"
+               [chartOptions]="{ scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }"
+               [showLegend]="true"
                [showDataLabels]="false"
                [decimalPlaces]="2">
     </app-chart>

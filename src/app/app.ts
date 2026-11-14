@@ -3,7 +3,9 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faChevronDown, faTimes, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
+import { TenantAccess } from './models/auth.models';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,8 @@ import { AuthService } from './services/auth.service';
     RouterOutlet,
     RouterModule,
     FontAwesomeModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   templateUrl: './app.html',
   standalone: true,
@@ -20,6 +23,7 @@ import { AuthService } from './services/auth.service';
 export class App implements OnChanges, OnInit {
   manageOpen = false;
   tripsOpen = false;
+  investmentsOpen = false;
   faChevronDown = faChevronDown;
   faBars = faBars;
   faTimes = faTimes;
@@ -27,6 +31,8 @@ export class App implements OnChanges, OnInit {
   faUser = faUser;
   public sidebarOpen = true;
   currentUser: any = null;
+  tenantAccess: TenantAccess[] = [];
+  activeTenantId = '';
   isAuthenticated = false;
   isScrolled = false;
 
@@ -39,10 +45,12 @@ export class App implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.syncTenantSelection();
     this.isAuthenticated = this.authService.isAuthenticated();
 
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.syncTenantSelection();
       this.cdr.detectChanges();
     });
 
@@ -88,8 +96,30 @@ export class App implements OnChanges, OnInit {
     }
   }
 
+  toggleInvestments() {
+    this.investmentsOpen = !this.investmentsOpen;
+    if (this.investmentsOpen) {
+      this.manageOpen = false;
+      this.tripsOpen = false;
+    }
+  }
+
   logout() {
     this.authService.logout();
+  }
+
+  changeTenant(tenantId: string): void {
+    if (!tenantId || tenantId === this.activeTenantId) {
+      return;
+    }
+
+    this.authService.selectTenant(tenantId);
+    window.location.reload();
+  }
+
+  private syncTenantSelection(): void {
+    this.tenantAccess = this.authService.getTenantAccess();
+    this.activeTenantId = this.authService.getTenantId() ?? '';
   }
 
   @HostListener('window:scroll')
