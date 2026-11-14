@@ -86,6 +86,7 @@ export class App implements OnChanges, OnInit {
     this.manageOpen = !this.manageOpen;
     if (this.manageOpen) {
       this.tripsOpen = false;
+      this.investmentsOpen = false;
     }
   }
 
@@ -93,6 +94,7 @@ export class App implements OnChanges, OnInit {
     this.tripsOpen = !this.tripsOpen;
     if (this.tripsOpen) {
       this.manageOpen = false;
+      this.investmentsOpen = false;
     }
   }
 
@@ -102,6 +104,20 @@ export class App implements OnChanges, OnInit {
       this.manageOpen = false;
       this.tripsOpen = false;
     }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target;
+    if (target instanceof Element && !target.closest('.submenu-wrap')) {
+      this.closeSubmenus();
+    }
+  }
+
+  private closeSubmenus(): void {
+    this.manageOpen = false;
+    this.tripsOpen = false;
+    this.investmentsOpen = false;
   }
 
   logout() {
