@@ -17,45 +17,48 @@
       <nav class="topnav" [class.open]="sidebarOpen">
         <ul class="nav-list">
           <li class="submenu-wrap">
-            <button type="button" class="submenu-toggle" (click)="toggleManage()">
-              <span>Manage Bills</span>
+            <button type="button" class="submenu-toggle" [class.selected]="manageOpen" [attr.aria-expanded]="manageOpen" (click)="toggleManage()">
+              <fa-icon [icon]="faBills" class="mobile-nav-icon"></fa-icon>
+              <span class="nav-label">Manage Bills</span>
               <fa-icon [icon]="faChevronDown" [class.rotated]="manageOpen" class="chevron"></fa-icon>
             </button>
 
             @if (manageOpen) {
             <ul class="submenu">
-              <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
-              <li><a routerLink="/bills" routerLinkActive="active">Bills</a></li>
-              <li><a routerLink="/dashboard" routerLinkActive="active">Bills Dashboard</a></li>
-              <li><a routerLink="/imports" routerLinkActive="active">Import Statement</a></li>
+              <li><a routerLink="/categories" routerLinkActive="active" (click)="closeMobileNavigation()">Categories</a></li>
+              <li><a routerLink="/bills" routerLinkActive="active" (click)="closeMobileNavigation()">Bills</a></li>
+              <li><a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileNavigation()">Bills Dashboard</a></li>
+              <li><a routerLink="/imports" routerLinkActive="active" (click)="closeMobileNavigation()">Import Statement</a></li>
             </ul>
             }
           </li>
 
           <li class="submenu-wrap">
-            <button type="button" class="submenu-toggle" (click)="toggleTrips()">
-              <span>Manage Trips</span>
+            <button type="button" class="submenu-toggle" [class.selected]="tripsOpen" [attr.aria-expanded]="tripsOpen" (click)="toggleTrips()">
+              <fa-icon [icon]="faTrips" class="mobile-nav-icon"></fa-icon>
+              <span class="nav-label">Manage Trips</span>
               <fa-icon [icon]="faChevronDown" [class.rotated]="tripsOpen" class="chevron"></fa-icon>
             </button>
 
             @if (tripsOpen) {
             <ul class="submenu">
-              <li><a routerLink="/trips" routerLinkActive="active">Trip Manager</a></li>
-              <li><a routerLink="/trips/dashboard" routerLinkActive="active">Trips Dashboard</a></li>
+              <li><a routerLink="/trips" routerLinkActive="active" (click)="closeMobileNavigation()">Trip Manager</a></li>
+              <li><a routerLink="/trips/dashboard" routerLinkActive="active" (click)="closeMobileNavigation()">Trips Dashboard</a></li>
             </ul>
             }
           </li>
 
           <li class="submenu-wrap">
-            <button type="button" class="submenu-toggle" (click)="toggleInvestments()">
-              <span>Investments</span>
+            <button type="button" class="submenu-toggle" [class.selected]="investmentsOpen" [attr.aria-expanded]="investmentsOpen" (click)="toggleInvestments()">
+              <fa-icon [icon]="faInvestments" class="mobile-nav-icon"></fa-icon>
+              <span class="nav-label">Investments</span>
               <fa-icon [icon]="faChevronDown" [class.rotated]="investmentsOpen" class="chevron"></fa-icon>
             </button>
 
             @if (investmentsOpen) {
             <ul class="submenu">
-              <li><a routerLink="/investments" routerLinkActive="active">Positions</a></li>
-              <li><a routerLink="/investments/dashboard" routerLinkActive="active">Dashboard</a></li>
+              <li><a routerLink="/investments" routerLinkActive="active" (click)="closeMobileNavigation()">Positions</a></li>
+              <li><a routerLink="/investments/dashboard" routerLinkActive="active" (click)="closeMobileNavigation()">Dashboard</a></li>
             </ul>
             }
           </li>

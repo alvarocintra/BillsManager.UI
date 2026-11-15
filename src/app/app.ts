@@ -1,7 +1,7 @@
 import { afterNextRender, ChangeDetectorRef, Component, HostListener, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBars, faChevronDown, faTimes, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronDown, faTimes, faSignOutAlt, faUser, faFileInvoiceDollar, faSuitcaseRolling, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
@@ -29,7 +29,11 @@ export class App implements OnChanges, OnInit {
   faTimes = faTimes;
   faSignOutAlt = faSignOutAlt;
   faUser = faUser;
+  faBills = faFileInvoiceDollar;
+  faTrips = faSuitcaseRolling;
+  faInvestments = faChartLine;
   public sidebarOpen = true;
+  public isMobile = false;
   currentUser: any = null;
   tenantAccess: TenantAccess[] = [];
   activeTenantId = '';
@@ -65,10 +69,13 @@ export class App implements OnChanges, OnInit {
   }
 
   setSidebarOpen() {
-    const mediaQuery = window?.matchMedia('(max-width: 768px)');
+    const mediaQuery = window?.matchMedia('(max-width: 900px)');
+    this.isMobile = Boolean(mediaQuery?.matches);
     mediaQuery?.addEventListener('change', () => {
+      this.isMobile = mediaQuery.matches;
       if (mediaQuery.matches) {
         this.sidebarOpen = false;
+        this.closeSubmenus();
       } else {
         this.sidebarOpen = true;
       }
@@ -80,6 +87,11 @@ export class App implements OnChanges, OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeMobileNavigation(): void {
+    this.closeSubmenus();
+    this.sidebarOpen = false;
   }
 
   toggleManage() {
@@ -110,6 +122,10 @@ export class App implements OnChanges, OnInit {
   onDocumentClick(event: MouseEvent): void {
     const target = event.target;
     if (target instanceof Element && !target.closest('.submenu-wrap')) {
+      this.closeSubmenus();
+    }
+    if (this.isMobile && target instanceof Element && !target.closest('.topbar')) {
+      this.sidebarOpen = false;
       this.closeSubmenus();
     }
   }

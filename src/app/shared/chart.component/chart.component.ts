@@ -87,10 +87,30 @@ styles: [`
       justify-content: space-between;
       gap: 1rem;
       margin-bottom: 1rem;
-      height: 40px; /* Altura fixa para o cabeçalho mapeado */
+      min-height: 40px;
     }
     .chart-header ::ng-deep [chart-header-control] { flex: 0 0 auto; }
     .chart-header h2 { margin: 0; font-size: 1.1rem; color: #1e293b; font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .chart-card { padding: 1rem; }
+      .chart-header {
+        height: auto;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .chart-header h2 {
+        width: 100%;
+        font-size: 1rem;
+        line-height: 1.35;
+      }
+      .chart-header ::ng-deep [chart-header-control] {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+    }
     
     /* Configuração reativa do corpo do gráfico */
     .chart-body { display: block; height: 350px; }
