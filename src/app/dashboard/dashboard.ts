@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ChartComponent } from "../shared/chart.component/chart.component";
 import { BillsRepository } from '../services/bills.repository';
 import { finalize } from 'rxjs';
@@ -8,11 +7,12 @@ import { faArrowDown, faArrowUp, faBullseye, faChartBar, faChartColumn, faMoneyB
 import { Bill } from '../models/bill.model';
 import { BillsFilter } from '../models/bills-filter.model';
 import { ToastrService } from 'ngx-toastr';
+import { DateRange, DateRangeFilterComponent } from '../shared/date-range-filter/date-range-filter';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ChartComponent, FontAwesomeModule, FormsModule],
+  imports: [ChartComponent, DateRangeFilterComponent, FontAwesomeModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush // Adicione esta linha
@@ -155,7 +155,7 @@ export class Dashboard implements OnInit {
     datasets: []
   };
 
-  chartDataRecurringExpenses: any = {
+  chartDataTopExpenseCategories: any = {
     labels: [],
     datasets: []
   };
@@ -198,7 +198,7 @@ export class Dashboard implements OnInit {
           this.setIncomeVsExpenseChartData();
           this.setExpenseDistributionChartData();
           this.setMoMChartData();
-          this.setRecurringExpensesChartData();
+          this.setTopExpenseCategoriesChartData();
           this.getBillsPerMonth();
           this.getBillsPerCategory();
           this.cdr.detectChanges();
@@ -258,7 +258,7 @@ export class Dashboard implements OnInit {
   }
 
   setStackedBarChartData() {
-    const expenses = this.bills.filter(bill => bill.type === 'expense');
+    const expenses = this.getChartBills().filter(bill => bill.type === 'expense');
 
     if (expenses.length === 0) {
       this.chartDataStackedByMonth = {
@@ -322,7 +322,7 @@ export class Dashboard implements OnInit {
   setChartDataTotalPerCategory() {
     const categoryTotals: Record<string, number> = {};
 
-    for (const bill of this.bills.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())) {
+    for (const bill of this.getChartBills().sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())) {
       const catName = bill.category?.name ?? 'Uncategorized';
       if (bill.type === 'income') {
         categoryTotals[catName] = (categoryTotals[catName] || 0) + bill.amount;
@@ -351,7 +351,7 @@ export class Dashboard implements OnInit {
   setChartDataTotalPerMonth() {
     const monthTotals: Record<string, number> = {};
 
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       const date = new Date(bill.dueDate);
       const month = date.toLocaleString('default', { month: 'short' });
       const year = date.getFullYear();
@@ -392,7 +392,7 @@ export class Dashboard implements OnInit {
   getBillsPerMonth() {
     const monthCounts: Record<string, number> = {};
 
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       const date = new Date(bill.dueDate);
       const month = date.toLocaleString('default', { month: 'short' });
       const year = date.getFullYear();
@@ -427,7 +427,7 @@ export class Dashboard implements OnInit {
   getBillsPerCategory() {
     const categoryCounts: Record<string, number> = {};
 
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       const catName = bill.category?.name ?? 'Uncategorized';
       categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
     }
@@ -452,7 +452,7 @@ export class Dashboard implements OnInit {
   setIncomeVsExpenseChartData() {
     const monthlyTotals: { [monthYear: string]: { income: number; expense: number; count: number; } } = {};
 
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       const date = new Date(bill.dueDate);
       const month = date.toLocaleString('default', { month: 'short' });
       const year = date.getFullYear();
@@ -509,21 +509,11 @@ export class Dashboard implements OnInit {
  */
   setExpenseDistributionChartData() {
     const categoryTotals: Record<string, number> = {};
-    const fromDate = this.spendingFromDate ? new Date(`${this.spendingFromDate}T00:00:00`) : null;
-    const toDate = this.spendingToDate ? new Date(`${this.spendingToDate}T23:59:59.999`) : null;
 
     // 1. Somar os valores por categoria
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       // Filtra APENAS despesas
       if (bill.type === 'expense') {
-        const dueDate = new Date(bill.dueDate);
-        if (fromDate && dueDate < fromDate) {
-          continue;
-        }
-        if (toDate && dueDate > toDate) {
-          continue;
-        }
-
         const catName = bill.category?.name ?? 'Uncategorized';
         // Usamos Math.abs() porque o valor na bill pode vir negativo,
         // mas queremos o valor positivo gasto.
@@ -554,49 +544,60 @@ export class Dashboard implements OnInit {
   }
 
   onSpendingDateChange(): void {
-    this.setExpenseDistributionChartData();
+    this.refreshChartsForDateRange();
   }
 
-  setRecurringExpensesChartData(): void {
-    const monthlyTotals: Record<string, { recurring: number; oneOff: number; timestamp: number }> = {};
+  onChartDateRangeChange(range: DateRange): void {
+    this.spendingFromDate = range.from;
+    this.spendingToDate = range.to;
+    this.filters.fromDueDate = range.from ? new Date(`${range.from}T00:00:00`) : undefined;
+    this.filters.toDueDate = range.to ? new Date(`${range.to}T23:59:59.999`) : undefined;
+    this.getBills();
+  }
 
-    for (const bill of this.bills) {
-      if (bill.type !== 'expense') continue;
+  private refreshChartsForDateRange(): void {
+    this.setChartDataTotalPerCategory();
+    this.setChartDataTotalPerMonth();
+    this.setStackedBarChartData();
+    this.setIncomeVsExpenseChartData();
+    this.setExpenseDistributionChartData();
+    this.setMoMChartData();
+    this.setTopExpenseCategoriesChartData();
+    this.getBillsPerMonth();
+    this.getBillsPerCategory();
+    this.cdr.detectChanges();
+  }
 
+  private getChartBills(): Bill[] {
+    const fromDate = this.spendingFromDate ? new Date(`${this.spendingFromDate}T00:00:00`) : null;
+    const toDate = this.spendingToDate ? new Date(`${this.spendingToDate}T23:59:59.999`) : null;
+
+    return this.bills.filter(bill => {
       const dueDate = new Date(bill.dueDate);
-      const monthKey = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}`;
-      const monthLabel = dueDate.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+      return (!fromDate || dueDate >= fromDate) && (!toDate || dueDate <= toDate);
+    });
+  }
 
-      if (!monthlyTotals[monthKey]) {
-        monthlyTotals[monthKey] = { recurring: 0, oneOff: 0, timestamp: dueDate.getTime() };
-      }
-
-      const amount = Math.abs(bill.amount);
-      if (bill.isRecurring) {
-        monthlyTotals[monthKey].recurring += amount;
-      } else {
-        monthlyTotals[monthKey].oneOff += amount;
-      }
+  setTopExpenseCategoriesChartData(): void {
+    const categoryTotals: Record<string, number> = {};
+    for (const bill of this.getChartBills()) {
+      if (bill.type !== 'expense') continue;
+      const category = bill.category?.name ?? 'Uncategorized';
+      categoryTotals[category] = (categoryTotals[category] || 0) + Math.abs(bill.amount);
     }
 
-    const sortedMonths = Object.keys(monthlyTotals).sort();
-    this.chartDataRecurringExpenses = {
-      labels: sortedMonths.map(key => {
-        const { timestamp } = monthlyTotals[key];
-        return new Date(timestamp).toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-      }),
-      datasets: [
-        {
-          label: 'Recurring expenses',
-          data: sortedMonths.map(key => monthlyTotals[key].recurring),
-          backgroundColor: '#4caf50'
-        },
-        {
-          label: 'One-off expenses',
-          data: sortedMonths.map(key => monthlyTotals[key].oneOff),
-          backgroundColor: '#42a5f5'
-        }
-      ]
+    const topCategories = Object.entries(categoryTotals)
+      .sort(([, amountA], [, amountB]) => amountB - amountA)
+      .slice(0, 5);
+
+    this.chartDataTopExpenseCategories = {
+      labels: topCategories.map(([category]) => category),
+      datasets: [{
+        label: 'Total spent',
+        data: topCategories.map(([, amount]) => amount),
+        backgroundColor: topCategories.map(([category]) => this.getCategoryColor(category)),
+        borderWidth: 0
+      }]
     };
   }
 
@@ -605,7 +606,7 @@ export class Dashboard implements OnInit {
     const monthlyExpenseTotals: Record<string, number> = {};
 
     // 1. Agrupar o total de despesas por mês
-    for (const bill of this.bills) {
+    for (const bill of this.getChartBills()) {
       if (bill.type === 'expense') {
         const date = new Date(bill.dueDate);
         // Usamos um formato consistente para as chaves

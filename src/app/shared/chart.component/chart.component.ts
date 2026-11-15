@@ -318,7 +318,13 @@ export class ChartComponent implements OnChanges {
       }));
 
       this.apexOptions.xaxis = { categories: labels };
-      this.apexOptions.colors = datasets.map((ds: any) => ds.backgroundColor || '#42a5f5');
+      this.apexOptions.colors = datasets.flatMap((ds: any) => {
+        const backgroundColor = ds.backgroundColor;
+        if (Array.isArray(backgroundColor)) {
+          return backgroundColor.filter((color: unknown): color is string => typeof color === 'string');
+        }
+        return typeof backgroundColor === 'string' ? [backgroundColor] : ['#42a5f5'];
+      });
 
       if (this.chartType === 'line') {
         this.apexOptions.fill = { type: 'solid' };

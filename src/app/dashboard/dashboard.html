@@ -50,16 +50,10 @@
                [chartType]="'doughnut'" 
                [chartData]="chartDataExpenseDistribution"
                [showLegend]="true">
-        <div chart-header-control class="spending-date-filter">
-            <label for="spending-from-date">De
-                <input id="spending-from-date" type="date" [(ngModel)]="spendingFromDate"
-                       (ngModelChange)="onSpendingDateChange()" />
-            </label>
-            <label for="spending-to-date">Até
-                <input id="spending-to-date" type="date" [(ngModel)]="spendingToDate"
-                       (ngModelChange)="onSpendingDateChange()" />
-            </label>
-        </div>
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate"
+            [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Monthly Expenses by Category (Stacked)'" 
                [chartType]="'bar'" 
@@ -69,6 +63,9 @@
                [chartOptions]="{ scales: { x: { stacked: true } } }"
                [showDataLabels]="false" 
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Monthly Cash Flow (Income vs Expense)'" 
                [chartType]="'bar'" 
@@ -77,6 +74,9 @@
                [chartOptions]="{ scales: { x: { stacked: false }, y: { beginAtZero: true } } }"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart 
                 [chartTitle]="'Month-over-Month Expense Trend'" 
@@ -86,6 +86,9 @@
                 [chartOptions]="{ scales: { x: { stacked: false }, y: { beginAtZero: true } } }"
                 [showDataLabels]="false"
                 [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Total Spent per Category'"
                [chartType]="'bar'"
@@ -93,6 +96,9 @@
                [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Total Saved per Month'"
                [chartType]="'line'"
@@ -100,6 +106,9 @@
                [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Number of Bills per Month'"
                [chartType]="'bar'"
@@ -108,6 +117,9 @@
                [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
     <app-chart [chartTitle]="'Number of Bills per Category'"
                [chartType]="'bar'"
@@ -116,13 +128,19 @@
                [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
-    <app-chart [chartTitle]="'Recurring vs One-off Expenses by Month'"
+    <app-chart [chartTitle]="'Top 5 Expense Categories'"
                [chartType]="'bar'"
-               [chartData]="chartDataRecurringExpenses"
-               [chartOptions]="{ scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }"
-               [showLegend]="true"
+               [chartData]="chartDataTopExpenseCategories"
+               [chartOptions]="{ indexAxis: 'y', scales: { x: { beginAtZero: true } } }"
+               [showLegend]="false"
                [showDataLabels]="false"
                [decimalPlaces]="2">
+        <app-date-range-filter chart-header-control
+            [fromDate]="spendingFromDate" [toDate]="spendingToDate"
+            (dateRangeChange)="onChartDateRangeChange($event)"></app-date-range-filter>
     </app-chart>
 </div>
