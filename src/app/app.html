@@ -65,33 +65,47 @@
         </ul>
 
         @if (currentUser) {
-        <div class="nav-user">
-          @if (tenantAccess.length > 1) {
-          <label class="tenant-switcher">
-            <span>Workspace</span>
-            <select [ngModel]="activeTenantId" (ngModelChange)="changeTenant($event)" aria-label="Select workspace">
-              @for (tenant of tenantAccess; track tenant.id) {
-              <option [value]="tenant.id">{{ tenant.role ? tenant.id + ' · ' + tenant.role : tenant.id }}</option>
-              }
-            </select>
-          </label>
-          } @else if (tenantAccess.length === 1) {
-          <div class="tenant-switcher" aria-label="Active workspace">
-            <span>Workspace</span>
-            <strong>{{ tenantAccess[0].id }}</strong>
-            @if (tenantAccess[0].role) {
-            <small>{{ tenantAccess[0].role }}</small>
+        <div class="nav-user user-menu">
+          <button type="button" class="user-menu-toggle" (click)="toggleUserMenu()"
+                  [attr.aria-expanded]="userMenuOpen" aria-label="User menu" title="User menu">
+            <fa-icon [icon]="faUser"></fa-icon>
+          </button>
+          @if (userMenuOpen) {
+          <div class="user-menu-panel" (click)="$event.stopPropagation()">
+            <div class="user-menu-account">
+              <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
+              <span class="user-email">{{ currentUser.email }}</span>
+            </div>
+            @if (tenantAccess.length > 1) {
+            <label class="tenant-switcher">
+              <span>Workspace</span>
+              <select [ngModel]="activeTenantId" (ngModelChange)="changeTenant($event)" aria-label="Select workspace">
+                @for (tenant of tenantAccess; track tenant.id) {
+                <option [value]="tenant.id">{{ tenant.role ? tenant.id + ' · ' + tenant.role : tenant.id }}</option>
+                }
+              </select>
+            </label>
+            } @else if (tenantAccess.length === 1) {
+            <div class="tenant-switcher" aria-label="Active workspace">
+              <span>Workspace</span>
+              <strong>{{ tenantAccess[0].id }}</strong>
+              @if (tenantAccess[0].role) { <small>{{ tenantAccess[0].role }}</small> }
+            </div>
             }
+            <a class="user-menu-link" routerLink="/tenants" (click)="userMenuOpen = false">Gerenciar tenants</a>
+            <label class="language-switcher">
+              <span>Language</span>
+              <select [ngModel]="languageService.language" (ngModelChange)="changeLanguage($event)" aria-label="Select language">
+                <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+                <option value="en-GB">🇬🇧 English (UK)</option>
+              </select>
+            </label>
+            <button class="logout-btn" (click)="logout()" title="Logout">
+              <fa-icon [icon]="faSignOutAlt"></fa-icon>
+              <span>Logout</span>
+            </button>
           </div>
           }
-          <div class="user-info">
-            <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
-            <span class="user-email">{{ currentUser.email }}</span>
-          </div>
-          <button class="logout-btn" (click)="logout()" title="Logout">
-            <fa-icon [icon]="faSignOutAlt"></fa-icon>
-            <span>Logout</span>
-          </button>
         </div>
         }
       </nav>

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { TenantAccess } from './models/auth.models';
+import { LanguageService, SupportedLanguage } from './services/language.service';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class App implements OnChanges, OnInit {
   manageOpen = false;
   tripsOpen = false;
   investmentsOpen = false;
+  userMenuOpen = false;
   faChevronDown = faChevronDown;
   faBars = faBars;
   faTimes = faTimes;
@@ -38,23 +40,27 @@ export class App implements OnChanges, OnInit {
   tenantAccess: TenantAccess[] = [];
   activeTenantId = '';
   isAuthenticated = false;
+  isAdmin = false;
   isScrolled = false;
 
-  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef, public readonly languageService: LanguageService) {
     afterNextRender(() => {
       this.setSidebarOpen();
       this.updateScrollState();
+      this.languageService.initialize();
     });
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.syncTenantSelection();
+    this.isAdmin = this.authService.getTenantAccess().some(access => access.id === this.activeTenantId && access.role?.toLowerCase() === 'admin');
     this.isAuthenticated = this.authService.isAuthenticated();
 
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.syncTenantSelection();
+      this.isAdmin = this.authService.getTenantAccess().some(access => access.id === this.activeTenantId && access.role?.toLowerCase() === 'admin');
       this.cdr.detectChanges();
     });
 
@@ -87,6 +93,14 @@ export class App implements OnChanges, OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  toggleUserMenu(): void {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  changeLanguage(language: SupportedLanguage): void {
+    this.languageService.setLanguage(language);
   }
 
   closeMobileNavigation(): void {
@@ -124,6 +138,9 @@ export class App implements OnChanges, OnInit {
     if (target instanceof Element && !target.closest('.submenu-wrap')) {
       this.closeSubmenus();
     }
+    if (target instanceof Element && !target.closest('.user-menu')) {
+      this.userMenuOpen = false;
+    }
     if (this.isMobile && target instanceof Element && !target.closest('.topbar')) {
       this.sidebarOpen = false;
       this.closeSubmenus();
@@ -152,6 +169,7 @@ export class App implements OnChanges, OnInit {
   private syncTenantSelection(): void {
     this.tenantAccess = this.authService.getTenantAccess();
     this.activeTenantId = this.authService.getTenantId() ?? '';
+    this.isAdmin = this.tenantAccess.some(access => access.id === this.activeTenantId && access.role?.toLowerCase() === 'admin');
   }
 
   @HostListener('window:scroll')

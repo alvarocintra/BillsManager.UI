@@ -124,8 +124,8 @@ export class AuthService {
     }
 
     const tenantIds = this.parseStringArrayClaim(claims['tenantIds']);
-    const tenantRoles = this.parseStringArrayClaim(claims['tenantRoles']);
-    return tenantIds.map((id, index) => ({ id, role: tenantRoles[index] }));
+    const tenantRoles = this.parseTenantRolesClaim(claims['tenantRoles']);
+    return tenantIds.map((id, index) => ({ id, role: tenantRoles[id] ?? tenantRoles[String(index)] }));
   }
 
   selectTenant(tenantId: string): void {
@@ -182,6 +182,35 @@ export class AuthService {
     } catch {
       return [];
     }
+  }
+
+  private parseTenantRolesClaim(value: unknown): Record<string, string> {
+    if (Array.isArray(value)) {
+      return Object.fromEntries(value
+        .filter((role): role is string => typeof role === 'string')
+        .map((role, index) => [String(index), role]));
+    }
+
+    if (typeof value !== 'string') {
+      return {};
+    }
+
+    try {
+      const parsed: unknown = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return Object.fromEntries(parsed
+          .filter((role): role is string => typeof role === 'string')
+          .map((role, index) => [String(index), role]));
+      }
+      if (parsed && typeof parsed === 'object') {
+        return Object.fromEntries(Object.entries(parsed)
+          .filter((entry): entry is [string, string] => typeof entry[1] === 'string'));
+      }
+    } catch {
+      return {};
+    }
+
+    return {};
   }
 
   private hasValidToken(): boolean {
