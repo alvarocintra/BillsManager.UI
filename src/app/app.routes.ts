@@ -5,6 +5,7 @@ export const routes: Routes = [
     { path: '', loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },
     { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
     { path: 'tenants', loadComponent: () => import('./tenant-management/tenant-management').then(m => m.TenantManagement), canActivate: [authGuard] },
+    { path: 'settings/profile', loadComponent: () => import('./user-settings/user-settings').then(m => m.UserSettings), canActivate: [authGuard] },
     { path: 'categories', loadComponent: () => import('./categories/categories').then(m => m.Categories), canActivate: [authGuard] },
     { path: 'categories/add', loadComponent: () => import('./category-details/category-details').then(m => m.CategoryDetails), canActivate: [authGuard] },
     { path: 'categories/:id', loadComponent: () => import('./category-details/category-details').then(m => m.CategoryDetails), canActivate: [authGuard] },

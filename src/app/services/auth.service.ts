@@ -93,7 +93,7 @@ export class AuthService {
       return storedTenantId;
     }
 
-    const defaultTenantId = allowedTenants.length === 1 ? allowedTenants[0].id : null;
+    const defaultTenantId = allowedTenants[0]?.id ?? null;
     if (defaultTenantId) {
       localStorage.setItem(this.TENANT_KEY, defaultTenantId);
     } else {

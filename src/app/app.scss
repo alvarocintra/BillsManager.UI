@@ -1,6 +1,6 @@
 .app-shell {
   min-height: 100vh;
-  background: #f4f4f4;
+  background: var(--surface-page);
 }
 
 .topbar {
@@ -9,8 +9,8 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: #2c3e50;
-  color: #fff;
+  background: var(--brand-surface);
+  color: var(--text-on-accent);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
   transition: background-color 0.28s ease, backdrop-filter 0.28s ease, box-shadow 0.28s ease, opacity 0.28s ease;
 }
@@ -56,7 +56,7 @@
   margin-left: auto;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  color: var(--text-on-accent);
   font-size: 1.2rem;
   border-radius: 0.7rem;
   padding: 0.55rem 0.75rem;
@@ -82,7 +82,7 @@
 
 .nav-list a,
 .submenu-toggle {
-  color: #fff;
+  color: var(--text-on-accent);
   text-decoration: none;
   border: 0;
   background: transparent;
@@ -167,7 +167,7 @@
   height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-on-accent);
   background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
   font-size: 1rem;
@@ -190,10 +190,10 @@
   gap: 0.85rem;
   width: min(300px, calc(100vw - 2rem));
   padding: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-default);
   border-radius: 1rem;
-  color: #1e293b;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--surface-card);
   box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
 }
 
@@ -203,12 +203,12 @@
   gap: 0.65rem;
   min-width: 0;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-default);
 }
 
 .user-menu-account .user-icon {
   flex: 0 0 auto;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .user-email {
@@ -222,15 +222,15 @@
   display: block;
   padding: 0.6rem 0.7rem;
   border-radius: 0.55rem;
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--accent);
+  background: var(--surface-control);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
 }
 
 .user-menu-link:hover {
-  background: #dbeafe;
+  background: var(--surface-hover);
 }
 
 .tenant-switcher,
@@ -240,27 +240,27 @@
   align-items: stretch;
   gap: 0.35rem;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .language-switcher select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.45rem 0.55rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-strong);
   border-radius: 0.5rem;
-  color: #1e293b;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--surface-card);
 }
 
 .tenant-switcher select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.45rem 0.55rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-strong);
   border-radius: 0.5rem;
-  color: #1e293b;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--surface-card);
 }
 
 .logout-btn {
@@ -271,19 +271,19 @@
   border: 0;
   border-radius: 0.7rem;
   cursor: pointer;
-  color: #fff;
+  color: var(--text-on-accent);
   background: rgba(231, 76, 60, 0.95);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: #c0392b;
+  background: var(--danger-hover);
   transform: translateY(-1px);
 }
 
 .main-content {
   padding: 2rem;
-  background-color: #f4f4f4;
+  background-color: var(--surface-page);
   transition: padding-top 0.2s ease;
 }
 
@@ -303,7 +303,7 @@
 
 @media (max-width: 900px) {
   .topbar {
-    background: #2c3e50;
+    background: var(--brand-surface);
   }
 
   .topbar-inner {
@@ -384,7 +384,7 @@
   }
 
   .submenu-toggle.selected {
-    color: #fff;
+    color: var(--text-on-accent);
     background: rgba(255, 255, 255, 0.2);
   }
 

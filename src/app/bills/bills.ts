@@ -13,6 +13,7 @@ import { BillsFilter } from '../models/bills-filter.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmDialogService } from '../services/confirm-dialog.service';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-bills',
@@ -66,7 +67,8 @@ export class Bills implements OnInit {
     private destroyRef: DestroyRef,
     private cdr: ChangeDetectorRef,
     private toastr: ToastrService,
-    private confirmDialog: ConfirmDialogService) {
+    private confirmDialog: ConfirmDialogService,
+    public readonly themeService: ThemeService) {
   }
 
   ngOnInit(): void {

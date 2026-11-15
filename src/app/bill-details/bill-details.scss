@@ -5,7 +5,7 @@
   max-width: 500px;
   margin: 3rem auto;
   padding: 2rem 2.5rem;
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Poppins', sans-serif;
@@ -14,7 +14,7 @@
     text-align: center;
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: #2c3e50;
+    color: var(--text-primary);
   }
 
   .form-group {
@@ -24,7 +24,7 @@
     label {
       font-weight: 600;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: var(--text-primary);
     }
 
     input[type='text'],
@@ -32,13 +32,13 @@
     input[type='date'],
     select {
       padding: 0.75rem;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-strong);
       border-radius: 4px;
       font-size: 1rem;
       transition: border-color 0.2s;
 
       &:focus {
-        border-color: #1976d2;
+        border-color: var(--accent);
         outline: none;
       }
     }
@@ -48,7 +48,7 @@
       width: 1.1rem;
       height: 1.1rem;
       margin-right: 0.5rem;
-      accent-color: #1976d2;
+      accent-color: var(--accent);
       cursor: pointer;
     }
 
@@ -56,11 +56,11 @@
       display: flex;
       align-items: center;
       font-weight: 500;
-      color: #333;
+      color: var(--text-primary);
     }
 
     .error-message {
-      color: #d32f2f;
+      color: var(--danger);
       font-size: 0.9rem;
       margin-top: 0.5rem;
     }
@@ -81,11 +81,11 @@
       transition: background-color 0.2s;
 
       &:not(.cancel, .delete-btn) {
-        background: #1976d2;
-        color: #fff;
+        background: var(--accent);
+        color: var(--text-on-accent);
 
         &:hover {
-          background: #1565c0;
+          background: var(--accent-hover);
         }
 
         &:disabled {
@@ -95,8 +95,8 @@
       }
 
       &.cancel {
-        background: #e0e0e0;
-        color: #333;
+        background: var(--surface-control);
+        color: var(--text-primary);
 
         &:hover {
           background: #bdbdbd;
@@ -107,11 +107,11 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        background-color: #e74c3c;
+        background-color: var(--danger);
         color: white;
 
         &:hover {
-          background-color: #c0392b;
+          background-color: var(--danger-hover);
         }
       }
     }

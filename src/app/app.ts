@@ -5,8 +5,11 @@ import { faBars, faChevronDown, faTimes, faSignOutAlt, faUser, faFileInvoiceDoll
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
-import { TenantAccess } from './models/auth.models';
+import { Tenant, TenantAccess } from './models/auth.models';
 import { LanguageService, SupportedLanguage } from './services/language.service';
+import { TenantsRepository } from './services/tenants.repository';
+import { Router } from '@angular/router';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -38,12 +41,20 @@ export class App implements OnChanges, OnInit {
   public isMobile = false;
   currentUser: any = null;
   tenantAccess: TenantAccess[] = [];
+  tenantNames = new Map<string, string>();
   activeTenantId = '';
   isAuthenticated = false;
   isAdmin = false;
   isScrolled = false;
 
-  constructor(private authService: AuthService, private cdr: ChangeDetectorRef, public readonly languageService: LanguageService) {
+  constructor(
+    private authService: AuthService,
+    private tenantsRepository: TenantsRepository,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    public readonly languageService: LanguageService,
+    public readonly themeService: ThemeService
+  ) {
     afterNextRender(() => {
       this.setSidebarOpen();
       this.updateScrollState();
@@ -52,6 +63,7 @@ export class App implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
+    this.languageService.initialize();
     this.currentUser = this.authService.getCurrentUser();
     this.syncTenantSelection();
     this.isAdmin = this.authService.getTenantAccess().some(access => access.id === this.activeTenantId && access.role?.toLowerCase() === 'admin');
@@ -163,13 +175,38 @@ export class App implements OnChanges, OnInit {
     }
 
     this.authService.selectTenant(tenantId);
-    window.location.reload();
+    this.userMenuOpen = false;
+    window.location.assign('/dashboard');
   }
 
   private syncTenantSelection(): void {
     this.tenantAccess = this.authService.getTenantAccess();
     this.activeTenantId = this.authService.getTenantId() ?? '';
     this.isAdmin = this.tenantAccess.some(access => access.id === this.activeTenantId && access.role?.toLowerCase() === 'admin');
+    this.loadTenantNames();
+  }
+
+  tenantLabel(tenant: TenantAccess): string {
+    const name = this.tenantNames.get(tenant.id);
+    return `${name ? `${name} · ` : ''}${tenant.id}${tenant.role ? ` · ${tenant.role}` : ''}`;
+  }
+
+  private loadTenantNames(): void {
+    const adminTenantIds = this.tenantAccess
+      .filter(access => access.role?.toLowerCase() === 'admin')
+      .map(access => access.id);
+    if (!adminTenantIds.length) return;
+
+    for (const adminTenantId of adminTenantIds) {
+      this.tenantsRepository.getTenants(adminTenantId).subscribe({
+        next: tenants => {
+          const names = new Map(this.tenantNames);
+          for (const tenant of tenants) names.set(tenant.id, tenant.title);
+          this.tenantNames = names;
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
 
   @HostListener('window:scroll')

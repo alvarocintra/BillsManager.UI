@@ -81,7 +81,7 @@
               <span>Workspace</span>
               <select [ngModel]="activeTenantId" (ngModelChange)="changeTenant($event)" aria-label="Select workspace">
                 @for (tenant of tenantAccess; track tenant.id) {
-                <option [value]="tenant.id">{{ tenant.role ? tenant.id + ' · ' + tenant.role : tenant.id }}</option>
+                <option [value]="tenant.id">{{ tenantLabel(tenant) }}</option>
                 }
               </select>
             </label>
@@ -93,6 +93,7 @@
             </div>
             }
             <a class="user-menu-link" routerLink="/tenants" (click)="userMenuOpen = false">Gerenciar tenants</a>
+            <a class="user-menu-link" routerLink="/settings/profile" routerLinkActive="active" (click)="userMenuOpen = false">Profile settings</a>
             <label class="language-switcher">
               <span>Language</span>
               <select [ngModel]="languageService.language" (ngModelChange)="changeLanguage($event)" aria-label="Select language">

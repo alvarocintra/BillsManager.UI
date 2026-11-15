@@ -29,7 +29,7 @@ export interface DateRange {
       align-items: center;
       flex-wrap: wrap;
       gap: 0.5rem;
-      color: #64748b;
+      color: var(--text-secondary, #64748b);
       font-size: 0.8rem;
     }
     label { display: flex; align-items: center; gap: 0.35rem; }
@@ -39,10 +39,11 @@ export interface DateRange {
       min-width: 0;
       box-sizing: border-box;
       padding: 0.4rem 0.5rem;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--border-strong, #e2e8f0);
       border-radius: 6px;
-      background: #fff;
-      color: #334155;
+      background: var(--surface-input, #fff);
+      color: var(--text-primary, #334155);
+      color-scheme: inherit;
     }
     @media (max-width: 600px) {
       .date-range-filter { width: 100%; }

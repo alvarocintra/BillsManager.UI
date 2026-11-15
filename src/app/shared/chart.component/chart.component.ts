@@ -11,14 +11,16 @@ import { NgApexchartsModule, ChartComponent as ApexChartComponent } from 'ng-ape
       <div class="card chart-card">
         <div class="chart-header">
           <h2>{{ chartTitle }}</h2>
-          <button
-            *ngIf="hasChartData"
-            type="button"
-            class="expand-button"
-            (click)="toggleExpanded()">
-            {{ isExpanded ? 'Minimize' : 'Maximize' }}
-          </button>
-          <ng-content select="[chart-header-control]"></ng-content>
+          <div class="chart-header-controls">
+            <button
+              *ngIf="hasChartData"
+              type="button"
+              class="expand-button"
+              (click)="toggleExpanded()">
+              {{ isExpanded ? 'Minimize' : 'Maximize' }}
+            </button>
+            <ng-content select="[chart-header-control]"></ng-content>
+          </div>
         </div>
 
         <div class="chart-body">
@@ -54,11 +56,11 @@ styles: [`
     .chart-card {
       position: relative;
       z-index: 1;
-      background: #fff;
+      background: var(--surface-card, #fff);
       border-radius: 12px;
       padding: 1.25rem;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border-default, #e5e7eb);
     }
     
     /* Quando maximizado, o card ocupa quase a tela toda */
@@ -82,15 +84,22 @@ styles: [`
       backdrop-filter: blur(4px);
     }
     .chart-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      min-height: 0;
+    }
+    .chart-header-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      min-height: 40px;
+      gap: 0.75rem;
+      min-width: 0;
     }
-    .chart-header ::ng-deep [chart-header-control] { flex: 0 0 auto; }
-    .chart-header h2 { margin: 0; font-size: 1.1rem; color: #1e293b; font-weight: 600; }
+    .chart-header-controls ::ng-deep [chart-header-control] { flex: 0 1 auto; min-width: 0; }
+    .chart-header h2 { margin: 0; font-size: 1.1rem; color: var(--text-primary, #1e293b); font-weight: 600; }
 
     @media (max-width: 600px) {
       .chart-card { padding: 1rem; }
@@ -98,7 +107,6 @@ styles: [`
         height: auto;
         align-items: flex-start;
         justify-content: flex-start;
-        flex-direction: column;
         gap: 0.75rem;
       }
       .chart-header h2 {
@@ -106,9 +114,14 @@ styles: [`
         font-size: 1rem;
         line-height: 1.35;
       }
-      .chart-header ::ng-deep [chart-header-control] {
-        flex: 1 1 auto;
+      .chart-header-controls {
         width: 100%;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .chart-header-controls ::ng-deep [chart-header-control] {
+        flex: 1 1 auto;
+        width: auto;
       }
     }
     
@@ -133,9 +146,9 @@ styles: [`
     }
 
     .expand-button {
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      color: #334155;
+      border: 1px solid var(--border-default, #e2e8f0);
+      background: var(--surface-raised, #f8fafc);
+      color: var(--text-primary, #334155);
       border-radius: 999px;
       padding: 0.45rem 0.85rem;
       cursor: pointer;
@@ -143,12 +156,12 @@ styles: [`
       font-weight: 500;
       transition: all 0.2s ease;
     }
-    .expand-button:hover { background: #f1f5f9; border-color: #cbd5e1; transform: translateY(-1px); }
+    .expand-button:hover { background: var(--surface-hover, #f1f5f9); border-color: var(--border-strong, #cbd5e1); transform: translateY(-1px); }
     .no-data {
       padding: 50px;
       text-align: center;
-      color: #94a3b8;
-      background: #f8fafc;
+      color: var(--text-muted, #94a3b8);
+      background: var(--surface-raised, #f8fafc);
       border-radius: 8px;
       line-height: 250px;
     }

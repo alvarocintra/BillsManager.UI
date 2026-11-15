@@ -43,17 +43,57 @@
     </form>
   }
 
+  <form class="panel investment-filters" (ngSubmit)="applyFilters()">
+    <div class="panel-heading"><h2>Filters</h2><button type="button" class="text-button" (click)="resetFilters()">Clear filters</button></div>
+    <div class="filter-grid">
+      <label>Name<input name="filterName" [(ngModel)]="filters.Name" /></label>
+      <label>Type<select name="filterType" [(ngModel)]="filters.Type"><option value="">All</option><option value="stock">Stock</option><option value="other">Other</option></select></label>
+      <label>Category<input name="filterCategory" [(ngModel)]="filters.Category" /></label>
+      <label>Resource<input name="filterResource" [(ngModel)]="filters.Resource" /></label>
+      <label>Currency<input name="filterCurrency" maxlength="3" [(ngModel)]="filters.Currency" /></label>
+      <label>Ticker<input name="filterTicker" [(ngModel)]="filters.Ticker" /></label>
+      <label>Value from<input name="fromValue" type="number" min="0" step="any" [(ngModel)]="filters.FromValue" /></label>
+      <label>Value to<input name="toValue" type="number" min="0" step="any" [(ngModel)]="filters.ToValue" /></label>
+      <label>Updated from<input name="fromUpdated" type="date" [(ngModel)]="filters.FromLastUpdatedAt" /></label>
+      <label>Updated to<input name="toUpdated" type="date" [(ngModel)]="filters.ToLastUpdatedAt" /></label>
+    </div>
+    <div class="filter-actions"><label>Sort by<select name="sortBy" [(ngModel)]="sortBy"><option value="Name">Name</option><option value="Type">Type</option><option value="Category">Category</option><option value="Resource">Resource</option><option value="Currency">Currency</option><option value="CurrentValue">Value</option><option value="LastUpdatedAt">Last updated</option></select></label>
+      <label>Order<select name="sortOrder" [(ngModel)]="sortOrder"><option value="asc">Ascending</option><option value="desc">Descending</option></select></label>
+      <button class="primary" type="submit">Apply</button>
+    </div>
+  </form>
+
   @if (loading) { <div class="panel state">Loading investments…</div> }
   @else if (error) { <div class="panel state error">{{ error }} <button class="secondary" (click)="load()">Retry</button></div> }
   @else if (!investments.length) { <div class="panel state"><h2>No investments yet</h2><p>Add a position to start tracking your portfolio.</p><button class="primary" (click)="startCreate()">Add investment</button></div> }
   @else {
     <div class="table-panel">
-      <div class="table-scroll"><table><thead><tr><th>Investment</th><th>Type</th><th>Category</th><th>Resource</th><th>Quantity</th><th>Current value</th><th>Updated</th><th>Actions</th></tr></thead>
+      <div class="table-scroll"><table><thead><tr>
+        <th class="sortable" (click)="sortByColumn('Name')">Investment @if (sortBy === 'Name') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('Type')">Type @if (sortBy === 'Type') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('Category')">Category @if (sortBy === 'Category') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('Resource')">Resource @if (sortBy === 'Resource') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('Quantity')">Quantity @if (sortBy === 'Quantity') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('CurrentValue')">Current value @if (sortBy === 'CurrentValue') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th class="sortable" (click)="sortByColumn('LastUpdatedAt')">Updated @if (sortBy === 'LastUpdatedAt') { <fa-icon [icon]="sortOrder === 'asc' ? faChevronUp : faChevronDown"></fa-icon> }</th>
+        <th>Actions</th></tr></thead>
         <tbody>@for (item of investments; track trackById($index, item)) {
           <tr><td><strong>{{ item.name }}</strong>@if (item.ticker) { <small>{{ item.ticker }}</small> }</td><td>{{ item.type }}</td><td>{{ item.category }}</td><td>{{ item.resource }}</td><td>{{ item.quantity ?? '—' }}</td><td class="value">{{ getPositionValue(item) | currency:item.currency:'symbol-narrow':'1.2-2' }}@if (item.type === 'stock' && item.unitPrice != null) { <small>{{ item.quantity }} × {{ item.unitPrice | currency:item.currency:'symbol-narrow':'1.2-2' }} per share</small> }</td><td>{{ item.lastUpdatedAt | date:'mediumDate' }}</td>
             <td><div class="actions"><button (click)="openSnapshot(item)">Value</button><button (click)="openHistory(item)">History</button><button (click)="startEdit(item)">Edit</button><button class="danger" (click)="delete(item)">Delete</button></div></td></tr>
         }</tbody>
       </table></div>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="pagination">
+      <span>{{ totalItems }} investments</span>
+      <div class="pagination-controls">
+        <button class="secondary" type="button" (click)="previousPage()" [disabled]="pageNumber <= 1">Previous</button>
+        <span>Page {{ pageNumber }} of {{ totalPages || 1 }}</span>
+        <button class="secondary" type="button" (click)="nextPage()" [disabled]="pageNumber >= totalPages">Next</button>
+      </div>
+      <label class="page-size">Items per page<select name="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()"><option [ngValue]="10">10</option><option [ngValue]="20">20</option><option [ngValue]="50">50</option><option [ngValue]="100">100</option></select></label>
     </div>
   }
 

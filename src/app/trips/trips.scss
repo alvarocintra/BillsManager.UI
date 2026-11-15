@@ -3,7 +3,7 @@
   background:
     radial-gradient(circle at top left, rgba(255, 166, 0, 0.12), transparent 30%),
     radial-gradient(circle at bottom right, rgba(44, 62, 80, 0.08), transparent 35%),
-    #fff;
+    var(--surface-card);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 
@@ -22,16 +22,16 @@
   h3 {
     margin: 0;
     font-size: 1.6rem;
-    color: #1f2937;
+    color: var(--text-primary);
   }
 
   p {
     margin: 0.35rem 0 0;
-    color: #6b7280;
+    color: var(--text-secondary);
   }
 
   .add-btn {
-    background: linear-gradient(135deg, #2c3e50, #415d78);
+    background: var(--brand-gradient);
     color: white;
     padding: 0.7rem 1rem;
     border: none;
@@ -52,7 +52,7 @@
   font-size: 0.95rem;
 
   thead {
-    background-color: #2c3e50;
+    background-color: var(--brand-surface);
     color: white;
   }
 
@@ -60,7 +60,7 @@
   td {
     padding: 0.8rem 1rem;
     text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-default);
     white-space: nowrap;
   }
 
@@ -73,7 +73,7 @@
   }
 
   tr:hover:not(:first-child) {
-    background-color: #f8fafc;
+    background-color: var(--surface-raised);
   }
 
   .details-btn,
@@ -91,7 +91,7 @@
   }
 
   .delete-btn {
-    background-color: #e74c3c;
+    background-color: var(--danger);
   }
 }
 
@@ -101,7 +101,7 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.18);
-  background: #e5e7eb;
+  background: var(--surface-control);
 }
 
 .cover-thumb img {

@@ -1,0 +1,59 @@
+<section class="settings-page">
+  <header class="page-header">
+    <div class="eyebrow">Account</div>
+    <h1>Profile settings</h1>
+    <p>Update your personal details and application preferences.</p>
+  </header>
+
+  @if (loading) {
+    <div class="settings-card status" role="status">Loading settings…</div>
+  } @else if (loadError) {
+    <div class="settings-card status error-state" role="alert">
+      <p>Unable to load your profile.</p>
+      <button type="button" class="secondary-btn" (click)="loadProfile()">Retry</button>
+    </div>
+  } @else {
+    <form class="settings-card" (ngSubmit)="save()">
+      <div class="section-heading">
+        <div><h2>Personal details</h2><p>Your account email is shown for reference only.</p></div>
+      </div>
+      <div class="form-grid">
+        <label>Email
+          <input type="email" [value]="profile?.email ?? ''" readonly aria-readonly="true">
+        </label>
+        <label>First name
+          <input type="text" name="firstName" [(ngModel)]="firstName" maxlength="100" autocomplete="given-name" required>
+        </label>
+        <label>Last name
+          <input type="text" name="lastName" [(ngModel)]="lastName" maxlength="100" autocomplete="family-name" required>
+        </label>
+      </div>
+
+      <div class="section-heading preferences-heading">
+        <div><h2>Preferences</h2><p>Your choices apply across the interface and sync with your account.</p></div>
+      </div>
+      <div class="form-grid preferences-grid">
+        <label>Language
+          <select name="language" [(ngModel)]="language">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="en-GB">English (UK)</option>
+          </select>
+        </label>
+        <label>Colour mode
+          <select name="colorMode" [(ngModel)]="colorMode">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">Automatic (time of day)</option>
+          </select>
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <span class="save-hint">Language and colour changes apply when you save.</span>
+        <button class="primary-btn" type="submit" [disabled]="saving || !firstName.trim() || !lastName.trim()">
+          {{ saving ? 'Saving…' : 'Save changes' }}
+        </button>
+      </footer>
+    </form>
+  }
+</section>

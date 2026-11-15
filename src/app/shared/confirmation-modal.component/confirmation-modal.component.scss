@@ -1,5 +1,5 @@
 .confirm-dialog {
-  background-color: #fff;
+  background-color: var(--surface-card);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -13,13 +13,13 @@
   .confirm-title {
     font-size: 1.25rem;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--text-primary);
     margin: 0;
   }
 
   .confirm-message {
     font-size: 1rem;
-    color: #555;
+    color: var(--text-secondary);
   }
 
   .confirm-actions {
@@ -37,17 +37,17 @@
       transition: background-color 0.25s ease;
 
       &.confirm-btn {
-        background-color: #e74c3c;
+        background-color: var(--danger);
         color: white;
 
         &:hover {
-          background-color: #c0392b;
+          background-color: var(--danger-hover);
         }
       }
 
       &.cancel-btn {
         background-color: #bdc3c7;
-        color: #2c3e50;
+        color: var(--text-primary);
 
         &:hover {
           background-color: #a7b0b8;

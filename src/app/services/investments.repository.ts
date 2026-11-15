@@ -7,7 +7,9 @@ import {
   InvestmentSnapshot,
   InvestmentSnapshotRequest,
   InvestmentSummary,
-  InvestmentUpsertRequest
+  InvestmentUpsertRequest,
+  InvestmentsQuery,
+  PagedInvestments
 } from '../models/investment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -16,8 +18,28 @@ export class InvestmentsRepository {
 
   constructor(private http: HttpClient) {}
 
-  getInvestments(): Observable<Investment[]> {
-    return this.http.get<Investment[]>(this.apiUrl);
+  getInvestments(query?: InvestmentsQuery): Observable<PagedInvestments> {
+    const request = query ?? { PageNumber: 1, PageSize: 1000, SortBy: 'Name', SortOrder: 'asc' as const };
+    let params = new HttpParams()
+      .set('PageNumber', request.PageNumber)
+      .set('PageSize', request.PageSize)
+      .set('SortBy', request.SortBy)
+      .set('SortOrder', request.SortOrder);
+
+    for (const key of ['Name', 'Type', 'Category', 'Resource', 'Currency', 'Ticker'] as const) {
+      const value = request[key];
+      if (value?.trim()) params = params.set(key, value.trim());
+    }
+    for (const key of ['FromValue', 'ToValue'] as const) {
+      const value = request[key];
+      if (value !== undefined && value !== null) params = params.set(key, value);
+    }
+    for (const key of ['FromLastUpdatedAt', 'ToLastUpdatedAt'] as const) {
+      const value = request[key];
+      if (value) params = params.set(key, value);
+    }
+
+    return this.http.get<PagedInvestments>(this.apiUrl, { params });
   }
 
   getInvestment(id: string): Observable<Investment> {

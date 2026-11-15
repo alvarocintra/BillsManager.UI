@@ -25,7 +25,7 @@
 
   h1 {
     font-size: 2rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
   }
 
@@ -57,7 +57,7 @@
   label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--text-primary);
     font-weight: 600;
     font-size: 0.95rem;
   }

@@ -12,7 +12,7 @@ interface TextState {
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   readonly supportedLanguages: SupportedLanguage[] = ['pt-BR', 'en-GB'];
-  language: SupportedLanguage = 'en-GB';
+  language: SupportedLanguage = 'pt-BR';
   private translations: Record<string, string> = {};
   private observer?: MutationObserver;
   private readonly textStates = new WeakMap<Text, TextState>();
@@ -32,7 +32,7 @@ export class LanguageService {
     const browserLanguage = navigator.language.toLowerCase();
     const initial: SupportedLanguage = saved === 'pt-BR' || saved === 'en-GB'
       ? saved
-      : browserLanguage.startsWith('pt') ? 'pt-BR' : 'en-GB';
+      : 'pt-BR';
 
     this.observer = new MutationObserver(records => {
       for (const record of records) {

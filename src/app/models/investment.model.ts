@@ -12,6 +12,31 @@ export interface Investment {
   quantity?: number | null;
 }
 
+export interface InvestmentsQuery {
+  Name?: string;
+  Type?: string;
+  Category?: string;
+  Resource?: string;
+  Currency?: string;
+  Ticker?: string;
+  FromValue?: number | null;
+  ToValue?: number | null;
+  FromLastUpdatedAt?: string | null;
+  ToLastUpdatedAt?: string | null;
+  PageNumber: number;
+  PageSize: number;
+  SortBy: string;
+  SortOrder: 'asc' | 'desc';
+}
+
+export interface PagedInvestments {
+  items: Investment[];
+  totalItems: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface InvestmentUpsertRequest {
   type: 'stock' | 'other';
   name: string;

@@ -140,7 +140,7 @@
       </button>
     </div>
 
-    <div class="page-size">
+    <div class="page-size" [class.dark-theme]="themeService.isDark">
       <label for="pageSize">Items per page:</label>
       <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
         <option value="5">5</option>

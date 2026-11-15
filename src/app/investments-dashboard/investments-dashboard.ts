@@ -44,7 +44,7 @@ export class InvestmentsDashboard implements OnInit {
         this.summary = summary;
         if (!summary.currencies.some(c => c.currency === this.selectedCurrency)) this.selectedCurrency = summary.currencies[0]?.currency ?? '';
         this.updateAllocations();
-        this.repo.getInvestments().subscribe({ next: rows => { this.investments = rows; this.rebuildSummaryFromPositions(); this.updatePositions(); this.buildHistorySeries(this.portfolioHistory); this.cdr.detectChanges(); }, error: () => this.toastr.error('Could not load individual investment positions.') });
+        this.repo.getInvestments().subscribe({ next: result => { this.investments = result.items; this.rebuildSummaryFromPositions(); this.updatePositions(); this.buildHistorySeries(this.portfolioHistory); this.cdr.detectChanges(); }, error: () => this.toastr.error('Could not load individual investment positions.') });
         this.loadHistory();
       }, error: () => { this.error = 'Não foi possível carregar o resumo dos investimentos.'; } });
   }
