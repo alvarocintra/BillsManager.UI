@@ -92,7 +92,6 @@
               @if (tenantAccess[0].role) { <small>{{ tenantAccess[0].role }}</small> }
             </div>
             }
-            <a class="user-menu-link" routerLink="/tenants" (click)="userMenuOpen = false">Gerenciar tenants</a>
             <label class="language-switcher">
               <span>Language</span>
               <select [ngModel]="languageService.language" (ngModelChange)="changeLanguage($event)" aria-label="Select language">
