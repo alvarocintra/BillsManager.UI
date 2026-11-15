@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { TenantAccess } from './models/auth.models';
+import { LanguageService, SupportedLanguage } from './services/language.service';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class App implements OnChanges, OnInit {
   manageOpen = false;
   tripsOpen = false;
   investmentsOpen = false;
+  userMenuOpen = false;
   faChevronDown = faChevronDown;
   faBars = faBars;
   faTimes = faTimes;
@@ -40,10 +42,11 @@ export class App implements OnChanges, OnInit {
   isAuthenticated = false;
   isScrolled = false;
 
-  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef, public readonly languageService: LanguageService) {
     afterNextRender(() => {
       this.setSidebarOpen();
       this.updateScrollState();
+      this.languageService.initialize();
     });
   }
 
@@ -89,6 +92,14 @@ export class App implements OnChanges, OnInit {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
+  toggleUserMenu(): void {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  changeLanguage(language: SupportedLanguage): void {
+    this.languageService.setLanguage(language);
+  }
+
   closeMobileNavigation(): void {
     this.closeSubmenus();
     this.sidebarOpen = false;
@@ -123,6 +134,9 @@ export class App implements OnChanges, OnInit {
     const target = event.target;
     if (target instanceof Element && !target.closest('.submenu-wrap')) {
       this.closeSubmenus();
+    }
+    if (target instanceof Element && !target.closest('.user-menu')) {
+      this.userMenuOpen = false;
     }
     if (this.isMobile && target instanceof Element && !target.closest('.topbar')) {
       this.sidebarOpen = false;
